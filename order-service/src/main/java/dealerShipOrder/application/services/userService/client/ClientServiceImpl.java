@@ -13,7 +13,7 @@ import dealerShipOrder.domain.models.users.client.Client;
 import dealerShipOrder.domain.repository.orderRepository.OrderRepository;
 import dealerShipOrder.domain.repository.testDriveRequestRepository.testDriveRequestRepository.TestDriveRequestRepository;
 import dealerShipOrder.domain.repository.usersRepository.userRepository.UserRepository;
-import infrastructure.security.SecurityUtils;
+import dealerShipOrder.infrastructure.security.SecurityUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

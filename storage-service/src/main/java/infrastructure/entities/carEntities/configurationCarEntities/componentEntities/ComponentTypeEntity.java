@@ -1,5 +1,7 @@
 package infrastructure.entities.carEntities.configurationCarEntities.componentEntities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 import infrastructure.entities.BaseEntity;
@@ -8,6 +10,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "component_types")
+@Where(clause = "removed = false")
 @Getter
 @Setter
 public class ComponentTypeEntity extends BaseEntity {

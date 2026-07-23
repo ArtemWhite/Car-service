@@ -22,24 +22,6 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
 
-                .antMatchers(
-                        "/api/cars",
-                        "/api/cars/**",
-                        "/api/spare-parts",
-                        "/api/spare-parts/**",
-                        "/api/test-drives",
-                        "/api/test-drives/**",
-                        "/api/payments",
-                        "/api/payments/**",
-                        "/api/orders",
-                        "/api/orders/**",
-                        "/api/users",
-                        "/api/users/**",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**",
-                        "/actuator/health"
-                ).permitAll()
-
                 .antMatchers("/api/admin/**").hasRole("SYSTEM_ADMIN")
 
                 .antMatchers("/api/manager/**").hasRole("MANAGER")
@@ -47,6 +29,16 @@ public class SecurityConfig {
                 .antMatchers("/api/client/**").hasRole("CLIENT")
 
                 .antMatchers("/api/warehouse/**").hasRole("WAREHOUSE_ADMIN")
+
+                .antMatchers(
+                        "/api/cars",
+                        "/api/cars/**",
+                        "/api/spare-parts",
+                        "/api/spare-parts/**",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**",
+                        "/actuator/health"
+                ).permitAll()
 
                 .anyRequest().authenticated()
 

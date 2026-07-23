@@ -11,7 +11,7 @@ import dealerShipOrder.domain.models.testDriveRequest.TestDriveRequest;
 import dealerShipOrder.domain.models.testDriveRequest.TestDriveStatus;
 import dealerShipOrder.domain.models.users.client.Client;
 import domain.repository.carRepository.CarRepository;
-import infrastructure.security.SecurityUtils;
+import dealerShipOrder.infrastructure.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

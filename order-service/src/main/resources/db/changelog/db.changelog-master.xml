@@ -17,6 +17,8 @@
 
     <include file="v1/v1-order-6.0-create-outbox-table.xml" relativeToChangelogFile="true"/>
 
+    <include file="v1/v1-order-7.0-create-warehouse-stock-tables.xml" relativeToChangelogFile="true"/>
+
     <include file="v2/v2-order-insert-reference-data.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

@@ -3,7 +3,7 @@ package dealerShipOrder.application.mapper;
 import dealerShipOrder.application.dtos.request.testDriveRequest.CreateTestDriveRequest;
 import dealerShipOrder.application.dtos.request.testDriveRequest.UpdateTestDriveRequest;
 import dealerShipOrder.application.dtos.response.testDriveResponse.TestDriveResponse;
-import domain.exception.DomainValidationException;
+import dealerShipOrder.domain.models.expection.DomainValidationException;
 import dealerShipOrder.domain.models.testDriveRequest.TestDriveRequest;
 import dealerShipOrder.domain.models.testDriveRequest.TestDriveStatus;
 import org.springframework.stereotype.Component;

@@ -4,22 +4,24 @@ import application.mapper.CarMapper;
 import application.services.carService.BaseCarService;
 import domain.exception.EntityNotFoundException;
 import domain.models.car.Car;
-import domain.models.users.User;
 import domain.repository.carRepository.CarRepository;
-import domain.repository.userRepository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import applicationTest.WithMockSecurityExtension;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith({MockitoExtension.class, WithMockSecurityExtension.class})
 @DisplayName("BaseCarService Tests")
 class BaseCarServiceTest {
 
@@ -28,27 +30,20 @@ class BaseCarServiceTest {
     @Mock
     private CarMapper carMapper;
 
-    @Mock
-    private UserRepository userRepository;
-
     private TestBaseCarService baseCarService;
 
     @BeforeEach
     void setUp() {
-        baseCarService = new TestBaseCarService(carRepository, userRepository, carMapper);
+        baseCarService = new TestBaseCarService(carRepository, carMapper);
     }
 
     private static class TestBaseCarService extends BaseCarService {
-        public TestBaseCarService(CarRepository carRepository, UserRepository userRepository, CarMapper carMapper) {
-            super(carRepository, userRepository, carMapper);
+        public TestBaseCarService(CarRepository carRepository, CarMapper carMapper) {
+            super(carRepository, carMapper);
         }
 
         public Car testFindCarById(String id) {
             return findCarById(id);
-        }
-
-        public User testFindUserById(String id) {
-            return findUserById(id);
         }
 
         public Car testSaveCar(Car car) {
@@ -75,28 +70,6 @@ class BaseCarServiceTest {
 
         assertThrows(EntityNotFoundException.class, () -> {
             baseCarService.testFindCarById("car999");
-        });
-    }
-
-    @Test
-    @DisplayName("Should find user by id successfully")
-    void shouldFindUserByIdSuccessfully() {
-        User user = mock(User.class);
-        when(userRepository.findById("user123")).thenReturn(Optional.of(user));
-
-        User result = baseCarService.testFindUserById("user123");
-
-        assertNotNull(result);
-        assertEquals(user, result);
-    }
-
-    @Test
-    @DisplayName("Should throw exception when user not found")
-    void shouldThrowExceptionWhenUserNotFound() {
-        when(userRepository.findById("user999")).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> {
-            baseCarService.testFindUserById("user999");
         });
     }
 

@@ -2,7 +2,6 @@ package carIntegrationTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import domain.models.car.types.CarStatus;
-import domain.repository.userRepository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,6 @@ class CarControllerIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private UserRepository userRepository;
 
     private String adminId;
 

@@ -11,14 +11,16 @@ import domain.models.sparePart.SparePart;
 import domain.models.sparePart.SpareType;
 import domain.repository.carRepository.CarRepository;
 import domain.repository.sparePartRepository.SparePartRepository;
-import domain.repository.userRepository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import applicationTest.WithMockSecurityExtension;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith({MockitoExtension.class, WithMockSecurityExtension.class})
 @DisplayName("SparePartClientService Tests")
 class SparePartClientServiceImplTest {
 
@@ -38,9 +41,6 @@ class SparePartClientServiceImplTest {
 
     @Mock
     private CarRepository carRepository;
-
-    @Mock
-    private UserRepository userRepository;
 
     @Mock
     private SparePartMapper sparePartMapper;
@@ -71,10 +71,6 @@ class SparePartClientServiceImplTest {
     @Test
     @DisplayName("Should find compatible spare parts successfully")
     void shouldFindCompatibleSparePartsSuccessfully() {
-        HashMap<String, Integer> stockMap = new HashMap<>();
-        HashMap<String, String> sectionMap = new HashMap<>();
-        HashMap<String, String> locationMap = new HashMap<>();
-
         when(carRepository.findModelById("model1")).thenReturn(Optional.of(bmwModel));
         when(sparePartRepository.findByCompatibleModelWithStock(eq(bmwModel), anyMap(), anyMap(), anyMap()))
                 .thenReturn(List.of(sparePart));
@@ -90,10 +86,6 @@ class SparePartClientServiceImplTest {
     @Test
     @DisplayName("Should return empty list when no compatible spare parts")
     void shouldReturnEmptyListWhenNoCompatibleSpareParts() {
-        HashMap<String, Integer> stockMap = new HashMap<>();
-        HashMap<String, String> sectionMap = new HashMap<>();
-        HashMap<String, String> locationMap = new HashMap<>();
-
         when(carRepository.findModelById("model1")).thenReturn(Optional.of(bmwModel));
         when(sparePartRepository.findByCompatibleModelWithStock(eq(bmwModel), anyMap(), anyMap(), anyMap()))
                 .thenReturn(List.of());
@@ -121,6 +113,9 @@ class SparePartClientServiceImplTest {
     @DisplayName("Should get spare part details successfully")
     void shouldGetSparePartDetailsSuccessfully() {
         when(sparePartRepository.findById("part123")).thenReturn(Optional.of(sparePart));
+        when(sparePartRepository.getStockQuantity("part123")).thenReturn(10);
+        when(sparePartRepository.getSectionId("part123")).thenReturn("A-01");
+        when(sparePartRepository.getLocation("part123")).thenReturn("shelf-1");
         when(sparePartMapper.toResponse(any(SparePart.class), anyInt(), any(), any())).thenReturn(sparePartResponse);
 
         SparePartResponse result = sparePartClientService.getSparePartDetails("part123");
@@ -145,6 +140,7 @@ class SparePartClientServiceImplTest {
     @DisplayName("Should search spare parts by name")
     void shouldSearchSparePartsByName() {
         when(sparePartRepository.findByNameContaining("Brake")).thenReturn(List.of(sparePart));
+        when(sparePartRepository.getStockQuantity(anyString())).thenReturn(10);
         when(sparePartMapper.toResponse(any(SparePart.class), anyInt(), any(), any())).thenReturn(sparePartResponse);
 
         List<SparePartResponse> result = sparePartClientService.searchSpareParts("Brake");
@@ -158,6 +154,7 @@ class SparePartClientServiceImplTest {
     @DisplayName("Should search spare parts by partial name")
     void shouldSearchSparePartsByPartialName() {
         when(sparePartRepository.findByNameContaining("Pad")).thenReturn(List.of(sparePart));
+        when(sparePartRepository.getStockQuantity(anyString())).thenReturn(10);
         when(sparePartMapper.toResponse(any(SparePart.class), anyInt(), any(), any())).thenReturn(sparePartResponse);
 
         List<SparePartResponse> result = sparePartClientService.searchSpareParts("Pad");
@@ -182,6 +179,7 @@ class SparePartClientServiceImplTest {
     @DisplayName("Should search with empty query")
     void shouldSearchWithEmptyQuery() {
         when(sparePartRepository.findByNameContaining("")).thenReturn(List.of(sparePart));
+        when(sparePartRepository.getStockQuantity(anyString())).thenReturn(10);
         when(sparePartMapper.toResponse(any(SparePart.class), anyInt(), any(), any())).thenReturn(sparePartResponse);
 
         List<SparePartResponse> result = sparePartClientService.searchSpareParts("");
@@ -194,6 +192,7 @@ class SparePartClientServiceImplTest {
     @DisplayName("Should search with null query")
     void shouldSearchWithNullQuery() {
         when(sparePartRepository.findByNameContaining(null)).thenReturn(List.of(sparePart));
+        when(sparePartRepository.getStockQuantity(anyString())).thenReturn(10);
         when(sparePartMapper.toResponse(any(SparePart.class), anyInt(), any(), any())).thenReturn(sparePartResponse);
 
         List<SparePartResponse> result = sparePartClientService.searchSpareParts(null);
@@ -213,10 +212,6 @@ class SparePartClientServiceImplTest {
                 Price.of(1000, "RUB"),
                 Set.of(bmwModel)
         );
-
-        HashMap<String, Integer> stockMap = new HashMap<>();
-        HashMap<String, String> sectionMap = new HashMap<>();
-        HashMap<String, String> locationMap = new HashMap<>();
 
         when(carRepository.findModelById("model1")).thenReturn(Optional.of(bmwModel));
         when(sparePartRepository.findByCompatibleModelWithStock(eq(bmwModel), anyMap(), anyMap(), anyMap()))
@@ -240,10 +235,6 @@ class SparePartClientServiceImplTest {
                 Price.of(5000, "RUB"),
                 Set.of(bmwModel)
         );
-
-        HashMap<String, Integer> stockMap = new HashMap<>();
-        HashMap<String, String> sectionMap = new HashMap<>();
-        HashMap<String, String> locationMap = new HashMap<>();
 
         when(carRepository.findModelById("model1")).thenReturn(Optional.of(bmwModel));
         when(sparePartRepository.findByCompatibleModelWithStock(eq(bmwModel), anyMap(), anyMap(), anyMap()))

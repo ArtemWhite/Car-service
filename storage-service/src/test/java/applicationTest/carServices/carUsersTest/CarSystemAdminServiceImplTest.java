@@ -17,20 +17,17 @@ import domain.models.car.engine.EnginePower;
 import domain.models.car.transmission.Transmission;
 import domain.models.car.transmission.TransmissionType;
 import domain.models.car.types.*;
-import domain.models.users.User;
-import domain.models.users.client.Client;
-import domain.models.users.systemAdmin.AdminLevel;
-import domain.models.users.systemAdmin.SystemAdmin;
-import domain.models.users.warehouseAdmin.WarehouseAdmin;
 import domain.repository.carRepository.CarRepository;
-import domain.repository.userRepository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import applicationTest.WithMockSecurityExtension;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -41,7 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith({MockitoExtension.class, WithMockSecurityExtension.class})
 @DisplayName("CarSystemAdminService Tests")
 class CarSystemAdminServiceImplTest {
 
@@ -49,16 +47,11 @@ class CarSystemAdminServiceImplTest {
     private CarRepository carRepository;
 
     @Mock
-    private UserRepository userRepository;
-
-    @Mock
     private CarMapper carMapper;
 
     @InjectMocks
     private CarSystemAdminServiceImpl carAdminService;
 
-    private SystemAdmin systemAdmin;
-    private WarehouseAdmin warehouseAdmin;
     private Car car;
     private CreateCarRequest createRequest;
     private UpdateCarRequest updateRequest;
@@ -66,9 +59,6 @@ class CarSystemAdminServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        systemAdmin = new SystemAdmin("John", "Doe", "Michael", "john@email.com", "+1234567890", "password123", "emp123", AdminLevel.ADMIN);
-        warehouseAdmin = new WarehouseAdmin("Jane", "Smith", "Ann", "jane@email.com", "+9876543210", "pass456", "emp456");
-
         car = createTestCar();
 
         createRequest = new CreateCarRequest();
@@ -104,9 +94,9 @@ class CarSystemAdminServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should create car successfully by admin")
-    void shouldCreateCarSuccessfullyByAdmin() {
-        when(userRepository.findById("admin123")).thenReturn(Optional.of(systemAdmin));
+    @DisplayName("Should create car successfully")
+    void shouldCreateCarSuccessfully() {
+        when(carRepository.findModelByNameAndBrand(eq("320i"), eq(CarBrand.BMW))).thenReturn(Optional.empty());
         when(carMapper.toDomain(any(CreateCarRequest.class), isNull())).thenReturn(car);
         when(carRepository.save(any(Car.class))).thenReturn(car);
         when(carMapper.toResponse(car)).thenReturn(carResponse);
@@ -116,26 +106,12 @@ class CarSystemAdminServiceImplTest {
         assertNotNull(result);
         assertEquals("car123", result.getId());
         verify(carRepository, times(1)).save(car);
-        verify(userRepository, times(1)).save(systemAdmin);
-    }
-
-    @Test
-    @DisplayName("Should throw exception when creating car by non-admin")
-    void shouldThrowExceptionWhenCreatingCarByNonAdmin() {
-        User regularUser = new Client("emp123", "John", "Doe", null, "john@email.com", "+123", "pass");
-        when(userRepository.findById("user123")).thenReturn(Optional.of(regularUser));
-
-        assertThrows(DomainValidationException.class, () -> {
-            carAdminService.createCar(createRequest);
-        });
-
-        verify(carRepository, never()).save(any());
     }
 
     @Test
     @DisplayName("Should create car with AVAILABLE status by default")
     void shouldCreateCarWithAvailableStatus() {
-        when(userRepository.findById("admin123")).thenReturn(Optional.of(systemAdmin));
+        when(carRepository.findModelByNameAndBrand(eq("320i"), eq(CarBrand.BMW))).thenReturn(Optional.empty());
         when(carMapper.toDomain(any(CreateCarRequest.class), isNull())).thenReturn(car);
         when(carRepository.save(any(Car.class))).thenReturn(car);
         when(carMapper.toResponse(car)).thenReturn(carResponse);
@@ -148,26 +124,8 @@ class CarSystemAdminServiceImplTest {
     }
 
     @Test
-    @DisplayName("Should log action when creating car by system admin")
-    void shouldLogActionWhenCreatingCarBySystemAdmin() {
-        SystemAdmin realAdmin = new SystemAdmin("John", "Doe", "Michael",
-                "john@email.com", "+1234567890", "password123", "admin123", AdminLevel.ADMIN);
-
-        when(userRepository.findById("admin123")).thenReturn(Optional.of(realAdmin));
-        when(carMapper.toDomain(any(CreateCarRequest.class), isNull())).thenReturn(car);
-        when(carRepository.save(any(Car.class))).thenReturn(car);
-        when(carMapper.toResponse(car)).thenReturn(carResponse);
-        when(userRepository.save(any(SystemAdmin.class))).thenReturn(realAdmin);
-
-        carAdminService.createCar(createRequest);
-
-        verify(userRepository, times(1)).save(any(SystemAdmin.class));
-    }
-
-    @Test
-    @DisplayName("Should update car successfully by admin")
-    void shouldUpdateCarSuccessfullyByAdmin() {
-        when(userRepository.findById("admin123")).thenReturn(Optional.of(systemAdmin));
+    @DisplayName("Should update car successfully")
+    void shouldUpdateCarSuccessfully() {
         when(carRepository.findById("car123")).thenReturn(Optional.of(car));
         when(carRepository.save(any(Car.class))).thenReturn(car);
         when(carMapper.toResponse(car)).thenReturn(carResponse);
@@ -181,7 +139,6 @@ class CarSystemAdminServiceImplTest {
     @Test
     @DisplayName("Should throw exception when updating non-existent car")
     void shouldThrowExceptionWhenUpdatingNonExistentCar() {
-        when(userRepository.findById("admin123")).thenReturn(Optional.of(systemAdmin));
         when(carRepository.findById("car999")).thenReturn(Optional.empty());
 
         assertThrows(EntityNotFoundException.class, () -> {
@@ -193,7 +150,6 @@ class CarSystemAdminServiceImplTest {
     @DisplayName("Should throw exception when updating sold car")
     void shouldThrowExceptionWhenUpdatingSoldCar() {
         car.markAsSold();
-        when(userRepository.findById("admin123")).thenReturn(Optional.of(systemAdmin));
         when(carRepository.findById("car123")).thenReturn(Optional.of(car));
 
         assertThrows(DomainValidationException.class, () -> {
@@ -205,7 +161,6 @@ class CarSystemAdminServiceImplTest {
     @DisplayName("Should delete unavailable car successfully")
     void shouldDeleteUnavailableCarSuccessfully() {
         car.markAsUnavailable();
-        when(userRepository.findById("admin123")).thenReturn(Optional.of(systemAdmin));
         when(carRepository.findById("car123")).thenReturn(Optional.of(car));
         doNothing().when(carRepository).delete("car123");
 
@@ -220,7 +175,6 @@ class CarSystemAdminServiceImplTest {
         Car unavailableCar = createTestCar();
         unavailableCar.markAsUnavailable();
 
-        when(userRepository.findById("admin123")).thenReturn(Optional.of(systemAdmin));
         when(carRepository.findById("car123")).thenReturn(Optional.of(unavailableCar));
         doNothing().when(carRepository).delete("car123");
 
@@ -232,7 +186,6 @@ class CarSystemAdminServiceImplTest {
     @Test
     @DisplayName("Should change car status successfully")
     void shouldChangeCarStatusSuccessfully() {
-        when(userRepository.findById("admin123")).thenReturn(Optional.of(systemAdmin));
         when(carRepository.findById("car123")).thenReturn(Optional.of(car));
         when(carRepository.save(any(Car.class))).thenReturn(car);
         when(carMapper.toResponse(car)).thenReturn(carResponse);
@@ -246,13 +199,6 @@ class CarSystemAdminServiceImplTest {
     @Test
     @DisplayName("Should get all cars successfully")
     void shouldGetAllCarsSuccessfully() {
-        SystemAdmin realAdmin = new SystemAdmin(
-                "John", "Doe", "Michael",
-                "john@email.com", "+1234567890",
-                "password123", "admin123", AdminLevel.ADMIN
-        );
-
-        when(userRepository.findById("admin123")).thenReturn(Optional.of(realAdmin));
         when(carRepository.findAll()).thenReturn(List.of(car));
         when(carMapper.toResponseList(List.of(car))).thenReturn(List.of(carResponse));
 

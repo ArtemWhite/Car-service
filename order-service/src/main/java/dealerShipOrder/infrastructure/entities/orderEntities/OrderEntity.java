@@ -15,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
-//@Where(clause = "removed = false")
+@Where(clause = "removed = false")
 @Getter
 @Setter
 public class OrderEntity extends BaseEntity {

@@ -1,5 +1,7 @@
 package infrastructure.entities.carEntities.referenceCarEntities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 import infrastructure.entities.BaseEntity;
@@ -8,6 +10,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "car_models")
+@Where(clause = "removed = false")
 @Getter
 @Setter
 public class CarModelEntity extends BaseEntity {

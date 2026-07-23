@@ -2,7 +2,7 @@ package dealerShipOrder.application.services.userService;
 
 import dealerShipOrder.application.mapper.UserMapper;
 import dealerShipOrder.domain.repository.usersRepository.userRepository.UserRepository;
-import domain.exception.EntityNotFoundException;
+import dealerShipOrder.domain.models.expection.EntityNotFoundException;
 import dealerShipOrder.domain.models.users.User;
 
 public abstract class BaseUserService {

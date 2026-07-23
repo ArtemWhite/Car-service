@@ -68,6 +68,14 @@ public class SparePart
         return compatibles.contains(model);
     }
 
+    public void addCompatibleModel(CarModel model) {
+        compatibles.add(model);
+    }
+
+    public void removeCompatibleModel(String modelId) {
+        compatibles.removeIf(model -> model.getId().equals(modelId));
+    }
+
     public Set<CarModel> getCompatibles() {
         return Collections.unmodifiableSet(compatibles);
     }

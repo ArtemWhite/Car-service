@@ -26,6 +26,10 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
+                .antMatchers("/api/admin/**").hasRole("SYSTEM_ADMIN")
+                .antMatchers("/api/manager/**").hasAnyRole("MANAGER", "SYSTEM_ADMIN")
+                .antMatchers("/api/client/**").hasRole("CLIENT")
+                .antMatchers("/api/warehouse-admin/**").hasAnyRole("WAREHOUSE_ADMIN", "SYSTEM_ADMIN")
                 .antMatchers(
                         "/api/orders",
                         "/api/orders/**",
@@ -39,9 +43,6 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/actuator/health"
                 ).permitAll()
-                .antMatchers("/api/client/**").hasRole("CLIENT")
-                .antMatchers("/api/manager/**").hasAnyRole("MANAGER", "SYSTEM_ADMIN")
-                .antMatchers("/api/admin/**").hasRole("SYSTEM_ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer()

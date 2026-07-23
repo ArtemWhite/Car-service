@@ -1,5 +1,7 @@
 package infrastructure.entities.carEntities.technicalCarEntities.engineEntities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 import infrastructure.entities.BaseEntity;
@@ -8,6 +10,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "engine_fuel_types")
+@Where(clause = "removed = false")
 @Getter
 @Setter
 public class EngineFuelTypeEntity extends BaseEntity {

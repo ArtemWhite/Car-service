@@ -5,7 +5,7 @@ import dealerShipOrder.application.dtos.response.orderResponse.OrderHistoryEntry
 import dealerShipOrder.application.dtos.response.orderResponse.OrderResponse;
 import dealerShipOrder.domain.models.order.Order;
 import dealerShipOrder.domain.models.order.OrderHistoryEntry;
-import domain.exception.EntityNotFoundException;
+import dealerShipOrder.domain.models.expection.EntityNotFoundException;
 import domain.models.car.Car;
 import domain.repository.carRepository.CarRepository;
 import lombok.RequiredArgsConstructor;

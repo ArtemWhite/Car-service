@@ -1,5 +1,7 @@
 package infrastructure.entities.carEntities.configurationCarEntities.componentEntities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 import infrastructure.entities.BaseEntity;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "components")
+@Where(clause = "removed = false")
 @Getter
 @Setter
 public class ComponentEntity extends BaseEntity {

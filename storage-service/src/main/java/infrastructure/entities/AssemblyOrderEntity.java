@@ -4,6 +4,7 @@ import domain.models.assembly.AssemblyOrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Table(name = "assembly_orders")
 @Getter
 @Setter
+@Where(clause = "removed = false")
 public class AssemblyOrderEntity {
 
     @Id

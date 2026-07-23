@@ -6,13 +6,13 @@ import dealerShipOrder.application.mapper.TestDriveMapper;
 import dealerShipOrder.application.services.testDriveService.BaseTestDriveService;
 import dealerShipOrder.domain.repository.testDriveRequestRepository.testDriveRequestRepository.TestDriveRequestRepository;
 import dealerShipOrder.domain.repository.usersRepository.userRepository.UserRepository;
-import domain.exception.DomainValidationException;
+import dealerShipOrder.domain.models.expection.DomainValidationException;
 import domain.models.car.Car;
 import dealerShipOrder.domain.models.testDriveRequest.TestDriveRequest;
 import dealerShipOrder.domain.models.users.User;
 import dealerShipOrder.domain.models.users.client.Client;
 import domain.repository.carRepository.CarRepository;
-import infrastructure.security.SecurityUtils;
+import dealerShipOrder.infrastructure.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -2,8 +2,8 @@ package dealerShipOrder.application.services.testDriveService;
 
 import dealerShipOrder.domain.repository.testDriveRequestRepository.testDriveRequestRepository.TestDriveRequestRepository;
 import dealerShipOrder.domain.repository.usersRepository.userRepository.UserRepository;
-import domain.exception.DomainValidationException;
-import domain.exception.EntityNotFoundException;
+import dealerShipOrder.domain.models.expection.DomainValidationException;
+import dealerShipOrder.domain.models.expection.EntityNotFoundException;
 import domain.models.car.Car;
 import dealerShipOrder.domain.models.testDriveRequest.TestDriveRequest;
 import dealerShipOrder.domain.models.users.User;

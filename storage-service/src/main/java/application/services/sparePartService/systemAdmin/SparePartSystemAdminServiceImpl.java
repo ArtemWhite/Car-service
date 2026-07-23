@@ -95,7 +95,7 @@ public class SparePartSystemAdminServiceImpl extends BaseSparePartService implem
         CarModel model = carRepository.findModelById(modelId)
                 .orElseThrow(() -> new EntityNotFoundException("Car model not found: " + modelId));
 
-        sparePart.getCompatibles().add(model);
+        sparePart.addCompatibleModel(model);
         saveSparePart(sparePart);
         log.info("Compatible model added");
     }
@@ -106,7 +106,7 @@ public class SparePartSystemAdminServiceImpl extends BaseSparePartService implem
         log.info("Removing compatible model {} from spare part {} by admin: {}", modelId, sparePartId, adminId);
 
         SparePart sparePart = findSparePartById(sparePartId);
-        sparePart.getCompatibles().removeIf(model -> model.getId().equals(modelId));
+        sparePart.removeCompatibleModel(modelId);
         saveSparePart(sparePart);
         log.info("Compatible model removed");
     }

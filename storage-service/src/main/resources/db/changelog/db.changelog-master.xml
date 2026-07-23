@@ -13,9 +13,7 @@
 
     <include file="v1/v1-storage-4.0-create-configuration-tables.xml" relativeToChangelogFile="true"/>
 
-    <include file="v1/v1-storage-5.0-create-warehouse-tables.xml" relativeToChangelogFile="true"/>
-
-    <include file="v1/v1-storage-6.0-create-assembly-orders-table.xml" relativeToChangelogFile="true"/>
+    <include file="v1/v1-storage-5.0-create-assembly-orders-table.xml" relativeToChangelogFile="true"/>
 
     <include file="v2/v2-storage-insert-reference-data.xml" relativeToChangelogFile="true"/>
 

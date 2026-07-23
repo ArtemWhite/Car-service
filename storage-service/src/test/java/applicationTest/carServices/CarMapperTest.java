@@ -24,7 +24,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import applicationTest.WithMockSecurityExtension;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -34,7 +37,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith({MockitoExtension.class, WithMockSecurityExtension.class})
 @DisplayName("CarMapper Tests")
 class CarMapperTest {
 
@@ -49,7 +53,7 @@ class CarMapperTest {
 
     @BeforeEach
     void setUp() {
-        // Используем lenient() чтобы избежать UnnecessaryStubbingException
+        // РСЃРїРѕР»СЊР·СѓРµРј lenient() С‡С‚РѕР±С‹ РёР·Р±РµР¶Р°С‚СЊ UnnecessaryStubbingException
         lenient().when(carRepository.findEngineByFuelTypePowerAndDisplacement(any(), anyDouble(), anyDouble()))
                 .thenReturn(Optional.empty());
 
@@ -142,12 +146,12 @@ class CarMapperTest {
 
         assertEquals(3500000, result.getPrice().getAmount().doubleValue());
 
-        // Проверяем только что метод был вызван, без verify для save методов
+        // РџСЂРѕРІРµСЂСЏРµРј С‚РѕР»СЊРєРѕ С‡С‚Рѕ РјРµС‚РѕРґ Р±С‹Р» РІС‹Р·РІР°РЅ, Р±РµР· verify РґР»СЏ save РјРµС‚РѕРґРѕРІ
         verify(carRepository, atLeastOnce()).findEngineByFuelTypePowerAndDisplacement(any(), anyDouble(), anyDouble());
         verify(carRepository, atLeastOnce()).findTransmissionByTypeAndGears(any(), anyInt());
     }
 
-    // Все остальные тесты остаются без изменений
+    // Р’СЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ С‚РµСЃС‚С‹ РѕСЃС‚Р°СЋС‚СЃСЏ Р±РµР· РёР·РјРµРЅРµРЅРёР№
     @Test
     @DisplayName("Should update car from UpdateCarRequest")
     void shouldUpdateCarFromUpdateCarRequest() {

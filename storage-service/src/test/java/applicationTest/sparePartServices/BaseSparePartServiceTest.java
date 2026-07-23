@@ -7,16 +7,17 @@ import domain.models.car.CarModel;
 import domain.models.car.types.CarBrand;
 import domain.models.sparePart.SparePart;
 import domain.models.sparePart.SpareType;
-import domain.models.users.User;
 import domain.repository.carRepository.CarRepository;
 import domain.repository.sparePartRepository.SparePartRepository;
-import domain.repository.userRepository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import applicationTest.WithMockSecurityExtension;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.Optional;
 import java.util.Set;
@@ -24,7 +25,8 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith({MockitoExtension.class, WithMockSecurityExtension.class})
 @DisplayName("BaseSparePartService Tests")
 class BaseSparePartServiceTest {
 
@@ -35,21 +37,16 @@ class BaseSparePartServiceTest {
     private CarRepository carRepository;
 
     @Mock
-    private UserRepository userRepository;
-
-    @Mock
     private SparePartMapper sparePartMapper;
 
     private TestBaseSparePartService baseService;
     private SparePart sparePart;
-    private User user;
 
     @BeforeEach
     void setUp() {
         baseService = new TestBaseSparePartService(
                 sparePartRepository,
                 carRepository,
-                userRepository,
                 sparePartMapper
         );
         sparePart = new SparePart(
@@ -60,47 +57,30 @@ class BaseSparePartServiceTest {
                 domain.models.car.Price.of(1000, "RUB"),
                 Set.of()
         );
-        user = mock(User.class);
     }
 
     private static class TestBaseSparePartService extends BaseSparePartService {
         public TestBaseSparePartService(
                 SparePartRepository sparePartRepository,
                 CarRepository carRepository,
-                UserRepository userRepository,
                 SparePartMapper sparePartMapper) {
-            super(sparePartRepository, carRepository, userRepository, sparePartMapper);
+            super(sparePartRepository, carRepository, sparePartMapper);
         }
 
         public SparePart testFindSparePartById(String id) {
             return findSparePartById(id);
         }
 
-        public User testFindUserById(String id) {
-            return findUserById(id);
-        }
-
         public Set<CarModel> testFindCompatibleModels(Set<String> modelIds) {
             return findCompatibleModels(modelIds);
         }
 
-        // Методы для работы со складом теперь используют репозиторий
         public int testGetStockQuantity(String partId) {
             return sparePartRepository.getStockQuantity(partId);
         }
 
         public void testSetStockQuantity(String partId, int quantity, String section, String location) {
             sparePartRepository.updateStock(partId, quantity, section, location);
-        }
-
-        public String testGetSection(String partId) {
-            // Section и Location теперь не хранятся отдельно,
-            // для тестов используем заглушки
-            return null;
-        }
-
-        public String testGetLocation(String partId) {
-            return null;
         }
     }
 
@@ -125,29 +105,6 @@ class BaseSparePartServiceTest {
             baseService.testFindSparePartById("part999");
         });
         verify(sparePartRepository, times(1)).findById("part999");
-    }
-
-    @Test
-    @DisplayName("Should find user by id successfully")
-    void shouldFindUserByIdSuccessfully() {
-        when(userRepository.findById("user123")).thenReturn(Optional.of(user));
-
-        User result = baseService.testFindUserById("user123");
-
-        assertNotNull(result);
-        assertEquals(user, result);
-        verify(userRepository, times(1)).findById("user123");
-    }
-
-    @Test
-    @DisplayName("Should throw exception when user not found")
-    void shouldThrowExceptionWhenUserNotFound() {
-        when(userRepository.findById("user999")).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> {
-            baseService.testFindUserById("user999");
-        });
-        verify(userRepository, times(1)).findById("user999");
     }
 
     @Test

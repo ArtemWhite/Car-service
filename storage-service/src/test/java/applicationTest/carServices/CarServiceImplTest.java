@@ -16,17 +16,16 @@ import domain.models.car.transmission.Transmission;
 import domain.models.car.transmission.TransmissionType;
 import domain.models.car.types.*;
 import domain.repository.carRepository.CarRepository;
-import domain.repository.carRepository.ConfigurationRepository;
-import domain.repository.orderRepository.OrderRepository;
-import domain.repository.testDriveRequestRepository.TestDriveRequestRepository;
-import domain.repository.userRepository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import applicationTest.WithMockSecurityExtension;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith({MockitoExtension.class, WithMockSecurityExtension.class})
 @DisplayName("CarService Tests")
 class CarServiceImplTest {
 
@@ -43,31 +43,15 @@ class CarServiceImplTest {
     private CarRepository carRepository;
 
     @Mock
-    private UserRepository userRepository;
-
-    @Mock
     private CarMapper carMapper;
-
-    @Mock
-    private ConfigurationRepository configurationRepository;
-
-    @Mock
-    private OrderRepository orderRepository;
-
-    @Mock
-    private TestDriveRequestRepository testDriveRepository;
 
     @InjectMocks
     private CarServiceImpl carService;
+
     private Car car;
 
     @BeforeEach
     void setUp() {
-        carService = new CarServiceImpl(
-                carRepository,
-                userRepository,
-                carMapper
-        );
         car = createTestCar();
     }
 

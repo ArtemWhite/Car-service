@@ -1,6 +1,6 @@
 package carIntegrationTests;
 
-import org.example.AutoDealerApplication;
+import org.example.StorageServiceApplication;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -13,7 +13,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = AutoDealerApplication.class
+        classes = StorageServiceApplication.class
 )
 public abstract class BaseIntegrationTest {
 

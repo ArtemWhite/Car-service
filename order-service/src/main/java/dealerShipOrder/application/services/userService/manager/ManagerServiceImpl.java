@@ -6,11 +6,11 @@ import dealerShipOrder.application.dtos.response.userResponse.users.ManagerRespo
 import dealerShipOrder.application.mapper.UserMapper;
 import dealerShipOrder.application.services.userService.BaseUserService;
 import dealerShipOrder.domain.repository.usersRepository.userRepository.UserRepository;
-import domain.exception.DomainValidationException;
+import dealerShipOrder.domain.models.expection.DomainValidationException;
 import dealerShipOrder.domain.models.users.User;
 import dealerShipOrder.domain.models.users.manager.Manager;
 import dealerShipOrder.domain.models.users.manager.Position;
-import infrastructure.security.SecurityUtils;
+import dealerShipOrder.infrastructure.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

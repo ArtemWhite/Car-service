@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = "com.dealership.order.infrastructure.repository")
-@EntityScan(basePackages = "com.dealership.order.infrastructure.entity")
+@EnableJpaRepositories(basePackages = "dealerShipOrder.infrastructure.jpaRepository")
+@EntityScan(basePackages = "dealerShipOrder.infrastructure.entities")
 @EnableKafka
 @EnableScheduling
 public class OrderServiceApplication {

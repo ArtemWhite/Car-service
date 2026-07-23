@@ -20,31 +20,29 @@ import domain.models.car.engine.EnginePower;
 import domain.models.car.transmission.Transmission;
 import domain.models.car.transmission.TransmissionType;
 import domain.models.car.types.*;
-import domain.models.order.Order;
-import domain.models.testDriveRequest.TestDriveRequest;
-import domain.models.users.client.Client;
 import domain.repository.carRepository.CarRepository;
 import domain.repository.carRepository.ConfigurationRepository;
-import domain.repository.testDriveRequestRepository.TestDriveRequestRepository;
-import domain.repository.orderRepository.OrderRepository;
-import domain.repository.userRepository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import applicationTest.WithMockSecurityExtension;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
+@ExtendWith({MockitoExtension.class, WithMockSecurityExtension.class})
 @DisplayName("CarClientService Tests")
 class CarClientServiceImplTest {
 
@@ -52,31 +50,23 @@ class CarClientServiceImplTest {
     private CarRepository carRepository;
 
     @Mock
-    private UserRepository userRepository;
-
-    @Mock
     private ConfigurationRepository configurationRepository;
-
-    @Mock
-    private TestDriveRequestRepository testDriveRepository;
-
-    @Mock
-    private OrderRepository orderRepository;
 
     @Mock
     private CarMapper carMapper;
 
+    @Mock
+    private RestTemplate restTemplate;
+
     @InjectMocks
     private CarClientServiceImpl carClientService;
 
-    private Client client;
     private Car car;
     private CarConfiguration configuration;
     private ApplyConfigurationRequest applyRequest;
 
     @BeforeEach
     void setUp() {
-        client = new Client("emp123", "John", "Doe", null, "john@email.com", "+1234567890", "password123");
         car = createTestCar();
         car.markAsAvailable();
 
@@ -172,71 +162,5 @@ class CarClientServiceImplTest {
         assertEquals(1, result.size());
 
         verify(carMapper, times(1)).toConfigurationResponse(any(CarConfiguration.class));
-    }
-
-    @Test
-    @DisplayName("Should send test drive request successfully")
-    void shouldSendTestDriveRequestSuccessfully() {
-        car.addToTestDriveFleet();
-        when(userRepository.findById("client123")).thenReturn(Optional.of(client));
-        when(carRepository.findById("car123")).thenReturn(Optional.of(car));
-        when(testDriveRepository.save(any(TestDriveRequest.class))).thenAnswer(i -> i.getArgument(0));
-        when(userRepository.save(any(Client.class))).thenReturn(client);
-
-        carClientService.sendTestDriveRequest("car123",  LocalDateTime.now().plusDays(2));
-
-        verify(testDriveRepository, times(1)).save(any(TestDriveRequest.class));
-        verify(userRepository, times(1)).save(client);
-    }
-
-    @Test
-    @DisplayName("Should throw when car not available for test drive")
-    void shouldThrowWhenCarNotAvailableForTestDrive() {
-        when(userRepository.findById("client123")).thenReturn(Optional.of(client));
-        when(carRepository.findById("car123")).thenReturn(Optional.of(car));
-
-        assertThrows(DomainValidationException.class, () -> {
-            carClientService.sendTestDriveRequest("car123", LocalDateTime.now().plusDays(1));
-        });
-    }
-
-    @Test
-    @DisplayName("Should throw when test drive time is in past")
-    void shouldThrowWhenTestDriveTimeInPast() {
-        car.addToTestDriveFleet();
-        when(userRepository.findById("client123")).thenReturn(Optional.of(client));
-        when(carRepository.findById("car123")).thenReturn(Optional.of(car));
-
-        assertThrows(DomainValidationException.class, () -> {
-            carClientService.sendTestDriveRequest("car123",  LocalDateTime.now().minusDays(1));
-        });
-    }
-
-    @Test
-    @DisplayName("Should make order on car successfully")
-    void shouldMakeOrderOnCarSuccessfully() {
-        when(userRepository.findById("client123")).thenReturn(Optional.of(client));
-        when(carRepository.findById("car123")).thenReturn(Optional.of(car));
-        when(orderRepository.save(any(Order.class))).thenAnswer(i -> i.getArgument(0));
-        when(userRepository.save(any(Client.class))).thenReturn(client);
-        when(carRepository.save(any(Car.class))).thenReturn(car);
-
-        carClientService.makeOrderOnCar("car123");
-
-        verify(orderRepository, times(1)).save(any(Order.class));
-        verify(userRepository, times(1)).save(client);
-        verify(carRepository, times(1)).save(car);
-    }
-
-    @Test
-    @DisplayName("Should throw when car not available for purchase")
-    void shouldThrowWhenCarNotAvailableForPurchase() {
-        car.markAsSold();
-        when(userRepository.findById("client123")).thenReturn(Optional.of(client));
-        when(carRepository.findById("car123")).thenReturn(Optional.of(car));
-
-        assertThrows(DomainValidationException.class, () -> {
-            carClientService.makeOrderOnCar("car123");
-        });
     }
 }

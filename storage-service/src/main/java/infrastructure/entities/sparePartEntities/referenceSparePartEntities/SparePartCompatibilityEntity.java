@@ -1,5 +1,7 @@
 package infrastructure.entities.sparePartEntities.referenceSparePartEntities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 import infrastructure.entities.BaseEntity;
@@ -10,6 +12,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "spare_part_compatibilities")
+@Where(clause = "removed = false")
 @Getter
 @Setter
 public class SparePartCompatibilityEntity extends BaseEntity {

@@ -1,7 +1,7 @@
 package dealerShipOrder.application.services.orderService;
 
 import dealerShipOrder.domain.repository.usersRepository.userRepository.UserRepository;
-import domain.exception.EntityNotFoundException;
+import dealerShipOrder.domain.models.expection.EntityNotFoundException;
 import dealerShipOrder.domain.models.order.Order;
 import dealerShipOrder.domain.models.users.User;
 import dealerShipOrder.domain.repository.orderRepository.OrderRepository;

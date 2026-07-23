@@ -8,7 +8,7 @@ import dealerShipOrder.domain.models.order.OrderStatus;
 import dealerShipOrder.domain.models.order.OrderType;
 import dealerShipOrder.domain.repository.orderRepository.OrderRepository;
 import dealerShipOrder.domain.repository.usersRepository.userRepository.UserRepository;
-import infrastructure.security.SecurityUtils;
+import dealerShipOrder.infrastructure.security.SecurityUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

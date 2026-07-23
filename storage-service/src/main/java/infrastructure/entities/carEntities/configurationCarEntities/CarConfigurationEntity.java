@@ -1,5 +1,7 @@
 package infrastructure.entities.carEntities.configurationCarEntities;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 import infrastructure.entities.BaseEntity;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "car_configurations")
+@Where(clause = "removed = false")
 @Getter
 @Setter
 public class CarConfigurationEntity extends BaseEntity {
