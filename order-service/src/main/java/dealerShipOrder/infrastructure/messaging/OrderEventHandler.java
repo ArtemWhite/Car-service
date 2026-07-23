@@ -1,5 +1,6 @@
 package dealerShipOrder.infrastructure.messaging;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dealerShipOrder.domain.models.order.Order;
 import dealerShipOrder.domain.repository.orderRepository.OrderRepository;
@@ -8,6 +9,7 @@ import events.OrderRejectedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,25 +27,29 @@ public class OrderEventHandler {
             containerFactory = "kafkaListenerContainerFactory"
     )
     @Transactional
-    public void handleStorageEvent(String message) {
+    public void handleStorageEvent(String message, Acknowledgment acknowledgment) {
         try {
             log.info("Received message from storage-events: {}", message);
 
-            if (message.contains("\"eventType\":\"ORDER_APPROVED\"")) {
-                OrderApprovedEvent event = objectMapper.readValue(message, OrderApprovedEvent.class);
+            JsonNode jsonNode = objectMapper.readTree(message);
+            String eventType = jsonNode.has("eventType") ? jsonNode.get("eventType").asText() : null;
+
+            if ("ORDER_APPROVED".equals(eventType)) {
+                OrderApprovedEvent event = objectMapper.treeToValue(jsonNode, OrderApprovedEvent.class);
                 handleOrderApproved(event);
             }
-            else if (message.contains("\"eventType\":\"ORDER_REJECTED\"")) {
-                OrderRejectedEvent event = objectMapper.readValue(message, OrderRejectedEvent.class);
+            else if ("ORDER_REJECTED".equals(eventType)) {
+                OrderRejectedEvent event = objectMapper.treeToValue(jsonNode, OrderRejectedEvent.class);
                 handleOrderRejected(event);
             }
             else {
-                log.warn("Unknown event type in message: {}", message);
+                log.warn("Unknown event type '{}' in message", eventType);
             }
+
+            acknowledgment.acknowledge();
 
         } catch (Exception e) {
             log.error("Failed to handle storage event", e);
-            throw new RuntimeException(e);
         }
     }
 

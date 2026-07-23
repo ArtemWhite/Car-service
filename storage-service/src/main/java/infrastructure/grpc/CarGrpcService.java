@@ -1,5 +1,7 @@
 package infrastructure.grpc;
 
+import application.dtos.response.carResponse.CarResponse;
+import application.services.carService.CarService;
 import com.dealershipOrder.grpc.*;
 
 import io.grpc.Status;
@@ -15,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CarGrpcService extends CarServiceGrpc.CarServiceImplBase {
 
-    private final CarServiceDomain carService;
+    private final CarService carService;
 
     @Override
     public void getAvailableCars(EmptyRequest request,
@@ -23,12 +25,11 @@ public class CarGrpcService extends CarServiceGrpc.CarServiceImplBase {
         log.info("gRPC request: getAvailableCars()");
 
         try {
-            List<Car> availableCars = carService.getAvailableCars();
+            List<CarResponse> availableCars = carService.getAvailableCars();
 
-            CarListResponse.Builder responseBuilder;
-            responseBuilder = CarListResponse.newBuilder();
+            CarListResponse.Builder responseBuilder = CarListResponse.newBuilder();
 
-            for (Car car : availableCars) {
+            for (CarResponse car : availableCars) {
                 responseBuilder.addCars(toProtoCar(car));
             }
 
@@ -49,12 +50,12 @@ public class CarGrpcService extends CarServiceGrpc.CarServiceImplBase {
 
     @Override
     public void getCarById(CarIdRequest request,
-                           StreamObserver<CarResponse> responseObserver) {
+                           StreamObserver<com.dealershipOrder.grpc.CarResponse> responseObserver) {
         String carId = request.getId();
         log.info("gRPC request: getCarById({})", carId);
 
         try {
-            Car car = carService.getCarById(carId);
+            CarResponse car = carService.getCarById(carId);
 
             if (car == null) {
                 responseObserver.onError(
@@ -76,106 +77,37 @@ public class CarGrpcService extends CarServiceGrpc.CarServiceImplBase {
         }
     }
 
-    private CarResponse toProtoCar(Car car) {
-        CarResponse.Builder builder = CarResponse.newBuilder();
+    private com.dealershipOrder.grpc.CarResponse toProtoCar(CarResponse car) {
+        com.dealershipOrder.grpc.CarResponse.Builder builder =
+                com.dealershipOrder.grpc.CarResponse.newBuilder();
 
-        builder.setId(car.getCarId());
-        builder.setBrand(car.getBrand());
-        builder.setModel(car.getModel());
-        builder.setBodyType(car.getBodyType());
-        builder.setColor(car.getColor());
-        builder.setDriveType(car.getDriveType());
-        builder.setPrice(car.getPrice());
-        builder.setCurrency(car.getCurrency());
-        builder.setStatus(car.getStatus());
+        builder.setId(car.getId());
+        builder.setBrand(car.getBrandDisplayName() != null ? car.getBrandDisplayName() : car.getBrand());
+        builder.setModel(car.getModelFullName() != null ? car.getModelFullName() : car.getModel());
+        builder.setBodyType(car.getBodyDisplayName() != null ? car.getBodyDisplayName() : car.getBodyType());
+        builder.setColor(car.getColorDisplayName() != null ? car.getColorDisplayName() : car.getColor());
+        builder.setDriveType(car.getDriveDisplayName() != null ? car.getDriveDisplayName() : car.getDriveType());
+        builder.setPrice(car.getPrice() != null ? car.getPrice() : 0.0);
+        builder.setCurrency(car.getCurrency() != null ? car.getCurrency() : "RUB");
+        builder.setStatus(car.getStatusDisplayName() != null ? car.getStatusDisplayName() : car.getStatus());
         builder.setAvailableForPurchase(car.isAvailableForPurchase());
-        builder.setConfigurationId(car.getConfigurationId());
-        builder.setConfigurationName(car.getConfigurationName());
-        builder.setCarInfo(car.getCarInfo());
+        builder.setConfigurationId(car.getConfigurationId() != null ? car.getConfigurationId() : "");
+        builder.setConfigurationName(car.getConfigurationName() != null ? car.getConfigurationName() : "");
+        builder.setCarInfo(car.getCarInfo() != null ? car.getCarInfo() : "");
 
         EngineInfo.Builder engineBuilder = EngineInfo.newBuilder();
-        engineBuilder.setFuelType(car.getEngineFuelType());
-        engineBuilder.setPower(car.getEnginePower());
-        engineBuilder.setDisplacement(car.getEngineDisplacement());
-        engineBuilder.setDescription(car.getEngineDescription());
+        engineBuilder.setFuelType(car.getEngineFuelDisplayName() != null ? car.getEngineFuelDisplayName() : car.getEngineFuelType());
+        engineBuilder.setPower(car.getEnginePower() != null ? car.getEnginePower() : 0.0);
+        engineBuilder.setDisplacement(car.getEngineDisplacement() != null ? car.getEngineDisplacement() : 0.0);
+        engineBuilder.setDescription(car.getEngineDescription() != null ? car.getEngineDescription() : "");
         builder.setEngine(engineBuilder.build());
 
-        TransmissionInfo.Builder transBuilder =
-                TransmissionInfo.newBuilder();
-        transBuilder.setType(car.getTransmissionType());
-        transBuilder.setGears(car.getGears());
-        transBuilder.setDescription(car.getTransmissionDescription());
+        TransmissionInfo.Builder transBuilder = TransmissionInfo.newBuilder();
+        transBuilder.setType(car.getTransmissionDisplayName() != null ? car.getTransmissionDisplayName() : car.getTransmissionType());
+        transBuilder.setGears(car.getTransmissionGears() != null ? car.getTransmissionGears() : 0);
+        transBuilder.setDescription(car.getTransmissionDescription() != null ? car.getTransmissionDescription() : "");
         builder.setTransmission(transBuilder.build());
 
         return builder.build();
     }
-}
-
-interface CarServiceDomain {
-    List<Car> getAvailableCars();
-    Car getCarById(String id);
-}
-
-class Car {
-    private String carId;
-    private String brand;
-    private String model;
-    private String bodyType;
-    private String color;
-    private String driveType;
-    private double price;
-    private String currency;
-    private String status;
-    private boolean availableForPurchase;
-    private String configurationId;
-    private String configurationName;
-    private String carInfo;
-    private String engineFuelType;
-    private double enginePower;
-    private double engineDisplacement;
-    private String engineDescription;
-    private String transmissionType;
-    private int gears;
-    private String transmissionDescription;
-
-    public String getCarId() { return carId; }
-    public void setCarId(String carId) { this.carId = carId; }
-    public String getBrand() { return brand; }
-    public void setBrand(String brand) { this.brand = brand; }
-    public String getModel() { return model; }
-    public void setModel(String model) { this.model = model; }
-    public String getBodyType() { return bodyType; }
-    public void setBodyType(String bodyType) { this.bodyType = bodyType; }
-    public String getColor() { return color; }
-    public void setColor(String color) { this.color = color; }
-    public String getDriveType() { return driveType; }
-    public void setDriveType(String driveType) { this.driveType = driveType; }
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
-    public String getCurrency() { return currency; }
-    public void setCurrency(String currency) { this.currency = currency; }
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-    public boolean isAvailableForPurchase() { return availableForPurchase; }
-    public void setAvailableForPurchase(boolean availableForPurchase) { this.availableForPurchase = availableForPurchase; }
-    public String getConfigurationId() { return configurationId; }
-    public void setConfigurationId(String configurationId) { this.configurationId = configurationId; }
-    public String getConfigurationName() { return configurationName; }
-    public void setConfigurationName(String configurationName) { this.configurationName = configurationName; }
-    public String getCarInfo() { return carInfo; }
-    public void setCarInfo(String carInfo) { this.carInfo = carInfo; }
-    public String getEngineFuelType() { return engineFuelType; }
-    public void setEngineFuelType(String engineFuelType) { this.engineFuelType = engineFuelType; }
-    public double getEnginePower() { return enginePower; }
-    public void setEnginePower(double enginePower) { this.enginePower = enginePower; }
-    public double getEngineDisplacement() { return engineDisplacement; }
-    public void setEngineDisplacement(double engineDisplacement) { this.engineDisplacement = engineDisplacement; }
-    public String getEngineDescription() { return engineDescription; }
-    public void setEngineDescription(String engineDescription) { this.engineDescription = engineDescription; }
-    public String getTransmissionType() { return transmissionType; }
-    public void setTransmissionType(String transmissionType) { this.transmissionType = transmissionType; }
-    public int getGears() { return gears; }
-    public void setGears(int gears) { this.gears = gears; }
-    public String getTransmissionDescription() { return transmissionDescription; }
-    public void setTransmissionDescription(String transmissionDescription) { this.transmissionDescription = transmissionDescription; }
 }

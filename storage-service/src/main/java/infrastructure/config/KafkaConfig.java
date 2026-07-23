@@ -64,14 +64,6 @@ public class KafkaConfig {
     }
 
     @Bean
-    public NewTopic orderEventsTopic() {
-        return TopicBuilder.name("order-events")
-                .partitions(3)
-                .replicas(1)
-                .build();
-    }
-
-    @Bean
     public NewTopic storageEventsTopic() {
         return TopicBuilder.name("storage-events")
                 .partitions(3)

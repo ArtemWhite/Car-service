@@ -22,7 +22,7 @@ public class SparePartClientController {
 
     @GetMapping("/compatible/{carModelId}")
     @Operation(summary = "Find compatible spare parts for car model")
-    @PreAuthorize("hasAnyRole('CLIENT', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENT', 'MANAGER', 'SYSTEM_ADMIN')")
     public ResponseEntity<SparePartListPresentationResponse> findCompatibleSpareParts(@PathVariable String carModelId) {
         var response = sparePartClientService.findCompatibleSpareParts(carModelId);
         return ResponseEntity.ok(mapper.toListPresentation(response));
@@ -30,7 +30,7 @@ public class SparePartClientController {
 
     @GetMapping("/{id}/details")
     @Operation(summary = "Get spare part details")
-    @PreAuthorize("hasAnyRole('CLIENT', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENT', 'MANAGER', 'SYSTEM_ADMIN')")
     public ResponseEntity<SparePartPresentationResponse> getSparePartDetails(@PathVariable String id) {
         var response = sparePartClientService.getSparePartDetails(id);
         return ResponseEntity.ok(mapper.toPresentation(response));
@@ -38,7 +38,7 @@ public class SparePartClientController {
 
     @GetMapping("/search")
     @Operation(summary = "Search spare parts by query")
-    @PreAuthorize("hasAnyRole('CLIENT', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENT', 'MANAGER', 'SYSTEM_ADMIN')")
     public ResponseEntity<SparePartListPresentationResponse> searchSpareParts(@RequestParam String query) {
         var response = sparePartClientService.searchSpareParts(query);
         return ResponseEntity.ok(mapper.toListPresentation(response));

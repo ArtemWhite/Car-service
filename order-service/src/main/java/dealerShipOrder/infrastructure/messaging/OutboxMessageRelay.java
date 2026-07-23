@@ -7,14 +7,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import javax.annotation.PostConstruct;
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
@@ -32,15 +33,28 @@ public class OutboxMessageRelay {
     @Value("${app.outbox.batch-size:100}")
     private int batchSize;
 
+    @Value("${app.outbox.max-retries:5}")
+    private int maxRetries;
+
+    @Value("${app.outbox.relay-delay-ms:5000}")
+    private long relayDelayMs;
+
+    @Value("${app.outbox.retry-delay-ms:60000}")
+    private long retryDelayMs;
+
+    @Value("${app.outbox.cleanup-delay-ms:3600000}")
+    private long cleanupDelayMs;
+
     @PostConstruct
     public void init() {
-        log.info("OutboxMessageRelay started. Topic: {}", orderEventsTopic);
+        log.info("OutboxMessageRelay started. Topic: {}, relayDelay: {}ms, retryDelay: {}ms",
+                orderEventsTopic, relayDelayMs, retryDelayMs);
         long pendingCount = outboxRepository.countPendingEvents();
         long failedCount = outboxRepository.countFailedEvents();
         log.info("Outbox status: {} pending, {} failed events", pendingCount, failedCount);
     }
 
-    @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedDelayString = "${app.outbox.relay-delay-ms:5000}")
     public void relayPendingEvents() {
         List<OutboxEventEntity> pendingEvents = outboxRepository.findPendingEvents();
 
@@ -50,77 +64,67 @@ public class OutboxMessageRelay {
 
         log.info("Found {} pending events in outbox", pendingEvents.size());
 
-        int processed = 0;
-        int failed = 0;
-
+        int count = 0;
         for (OutboxEventEntity event : pendingEvents) {
-            if (processed >= batchSize) {
+            if (count >= batchSize) {
                 log.info("Reached batch size limit ({}), continuing next cycle", batchSize);
                 break;
             }
-
-            boolean success = sendToKafka(event);
-
-            if (success) {
-                outboxRepository.markAsProcessed(event.getId(), Instant.now());
-                processed++;
-                log.debug("Event {} sent to Kafka, eventId: {}, orderId: {}",
-                        event.getEventType(), event.getEventId(), event.getAggregateId());
-            } else {
-                outboxRepository.markAsFailed(event.getId(), "Kafka send failed");
-                failed++;
-                log.warn("Event {} failed to send, eventId: {}", event.getEventType(), event.getEventId());
-            }
+            count++;
+            sendEventAsync(event);
         }
-
-        log.info("Outbox relay cycle completed: {} processed, {} failed", processed, failed);
     }
 
-    @Scheduled(fixedDelay = 60, timeUnit = TimeUnit.SECONDS)
+    @Scheduled(fixedDelayString = "${app.outbox.retry-delay-ms:60000}")
     public void retryFailedEvents() {
         Instant maxAge = Instant.now().minusSeconds(300);
         List<OutboxEventEntity> oldPendingEvents = outboxRepository.findPendingEventsOlderThan(maxAge);
 
-        if (oldPendingEvents.isEmpty()) {
-            return;
+        if (!oldPendingEvents.isEmpty()) {
+            log.info("Retrying {} old pending events", oldPendingEvents.size());
+            for (OutboxEventEntity event : oldPendingEvents) {
+                sendEventAsync(event);
+            }
         }
 
-        log.info("Retrying {} old pending events", oldPendingEvents.size());
+        List<OutboxEventEntity> failedEvents = outboxRepository.findFailedEventsForRetry(maxRetries);
 
-        for (OutboxEventEntity event : oldPendingEvents) {
-            boolean success = sendToKafka(event);
-
-            if (success) {
-                outboxRepository.markAsProcessed(event.getId(), Instant.now());
-                log.info("Successfully retried event {} after {} attempts",
-                        event.getEventId(), event.getRetryCount() + 1);
-            } else {
-                outboxRepository.markAsFailed(event.getId(), "Retry failed");
-                log.warn("Failed to retry event {} after {} attempts",
-                        event.getEventId(), event.getRetryCount() + 1);
+        if (!failedEvents.isEmpty()) {
+            log.info("Retrying {} failed events (retryCount < {})", failedEvents.size(), maxRetries);
+            for (OutboxEventEntity event : failedEvents) {
+                sendEventAsync(event);
             }
         }
     }
 
-    @Scheduled(fixedDelay = 1, timeUnit = TimeUnit.HOURS)
+    @Scheduled(fixedDelayString = "${app.outbox.cleanup-delay-ms:3600000}")
     public void cleanupProcessedEvents() {
-        Instant olderThan = Instant.now().minusSeconds(7 * 24 * 60 * 60); // 7 days
+        Instant olderThan = Instant.now().minusSeconds(7 * 24 * 60 * 60);
         int deleted = outboxRepository.deleteProcessedEventsOlderThan(olderThan);
         if (deleted > 0) {
             log.info("Cleaned up {} processed outbox events older than 7 days", deleted);
         }
     }
 
-    private boolean sendToKafka(OutboxEventEntity event) {
-        try {
-            String key = event.getAggregateId();
+    private void sendEventAsync(OutboxEventEntity event) {
+        String key = event.getAggregateId();
 
-            kafkaTemplate.send(orderEventsTopic, key, event.getPayload()).get(10, TimeUnit.SECONDS);
-            return true;
+        kafkaTemplate.send(orderEventsTopic, key, event.getPayload())
+                .addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
+                    @Override
+                    public void onSuccess(SendResult<String, String> result) {
+                        outboxRepository.markAsProcessed(event.getId(), Instant.now());
+                        log.debug("Event {} sent to Kafka, eventId: {}, offset: {}",
+                                event.getEventType(), event.getEventId(),
+                                result.getRecordMetadata() != null ? result.getRecordMetadata().offset() : "unknown");
+                    }
 
-        } catch (Exception e) {
-            log.error("Failed to send event {} to Kafka: {}", event.getEventId(), e.getMessage());
-            return false;
-        }
+                    @Override
+                    public void onFailure(Throwable ex) {
+                        outboxRepository.markAsFailed(event.getId(), ex.getMessage());
+                        log.warn("Failed to send event {} (eventId: {}): {}",
+                                event.getEventType(), event.getEventId(), ex.getMessage());
+                    }
+                });
     }
 }

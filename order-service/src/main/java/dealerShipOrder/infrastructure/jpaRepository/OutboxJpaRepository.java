@@ -34,6 +34,9 @@ public interface OutboxJpaRepository extends JpaRepository<OutboxEventEntity, UU
     @Query("DELETE FROM OutboxEventEntity e WHERE e.status = 'PROCESSED' AND e.processedAt <= :olderThan")
     int deleteProcessedEventsOlderThan(@Param("olderThan") Instant olderThan);
 
+    @Query("SELECT e FROM OutboxEventEntity e WHERE e.status = 'FAILED' AND e.retryCount < :maxRetries ORDER BY e.createdAt ASC")
+    List<OutboxEventEntity> findFailedEventsForRetry(@Param("maxRetries") int maxRetries);
+
     @Query("SELECT COUNT(e) FROM OutboxEventEntity e WHERE e.status = 'PENDING'")
     long countPendingEvents();
 

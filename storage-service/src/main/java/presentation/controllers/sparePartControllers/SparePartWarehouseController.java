@@ -24,7 +24,7 @@ public class SparePartWarehouseController {
 
     @PatchMapping("/stock")
     @Operation(summary = "Update stock quantity")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<SparePartPresentationResponse> updateStock(@Valid @RequestBody SparePartStockUpdatePresentationRequest request) {
         var appRequest = mapper.toApplication(request);
         var response = sparePartWarehouseService.updateStock(appRequest);
@@ -33,7 +33,7 @@ public class SparePartWarehouseController {
 
     @PostMapping("/{id}/receive")
     @Operation(summary = "Receive shipment")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<SparePartPresentationResponse> receiveShipment(@PathVariable String id, @RequestParam int quantity) {
         var response = sparePartWarehouseService.receiveShipment(id, quantity);
         return ResponseEntity.ok(mapper.toPresentation(response));
@@ -41,7 +41,7 @@ public class SparePartWarehouseController {
 
     @PatchMapping("/{id}/location")
     @Operation(summary = "Move to location")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<SparePartPresentationResponse> moveToLocation(
             @PathVariable String id,
             @RequestParam String section,
@@ -52,7 +52,7 @@ public class SparePartWarehouseController {
 
     @PostMapping("/{id}/write-off")
     @Operation(summary = "Write off spare parts")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<SparePartPresentationResponse> writeOff(
             @PathVariable String id,
             @RequestParam int quantity,

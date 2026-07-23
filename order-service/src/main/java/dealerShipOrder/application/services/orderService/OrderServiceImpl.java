@@ -35,7 +35,7 @@ public class OrderServiceImpl extends BaseOrderService implements OrderService {
         String currentUserId = SecurityUtils.getCurrentUserId();
         Order order = findOrderById(id);
 
-        boolean isAdminOrManager = SecurityUtils.hasRole("ADMIN") || SecurityUtils.hasRole("MANAGER");
+        boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
         if (!isAdminOrManager && !order.getClientId().equals(currentUserId)) {
             throw new SecurityException("Access denied: you can only view your own orders");
         }
@@ -46,7 +46,7 @@ public class OrderServiceImpl extends BaseOrderService implements OrderService {
     @Override
     public List<OrderResponse> getAllOrders() {
         String currentUserId = SecurityUtils.getCurrentUserId();
-        boolean isAdminOrManager = SecurityUtils.hasRole("ADMIN") || SecurityUtils.hasRole("MANAGER");
+        boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
 
         List<Order> orders = orderRepository.findAll();
 
@@ -62,7 +62,7 @@ public class OrderServiceImpl extends BaseOrderService implements OrderService {
     @Override
     public List<OrderResponse> getOrdersWithFilters(OrderFilterRequest filter) {
         String currentUserId = SecurityUtils.getCurrentUserId();
-        boolean isAdminOrManager = SecurityUtils.hasRole("ADMIN") || SecurityUtils.hasRole("MANAGER");
+        boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
 
         if (!isAdminOrManager) {
             filter.setClientId(currentUserId);

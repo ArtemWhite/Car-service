@@ -25,7 +25,7 @@ public class CarController {
 
     @GetMapping
     @Operation(summary = "Get all available cars")
-    @PreAuthorize("hasAnyRole('CLIENT', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENT', 'MANAGER', 'SYSTEM_ADMIN')")
     public ResponseEntity<?> getAvailableCars() {
         log.info("REST request: GET /api/v1/cars");
 
@@ -56,7 +56,7 @@ public class CarController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get car by ID")
-    @PreAuthorize("hasAnyRole('CLIENT', 'MANAGER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('CLIENT', 'MANAGER', 'SYSTEM_ADMIN')")
     public ResponseEntity<?> getCarById(@PathVariable String id) {
         log.info("REST request: GET /api/v1/cars/{}", id);
 

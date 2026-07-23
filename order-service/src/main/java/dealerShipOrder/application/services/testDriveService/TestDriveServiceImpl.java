@@ -38,7 +38,7 @@ public class TestDriveServiceImpl extends BaseTestDriveService implements TestDr
         String currentUserId = SecurityUtils.getCurrentUserId();
         TestDriveRequest request = findRequestById(id);
 
-        boolean isAdminOrManager = SecurityUtils.hasRole("ADMIN") || SecurityUtils.hasRole("MANAGER");
+        boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
         if (!isAdminOrManager && !request.getClientId().equals(currentUserId)) {
             throw new SecurityException("Access denied: you can only view your own test drives");
         }
@@ -59,7 +59,7 @@ public class TestDriveServiceImpl extends BaseTestDriveService implements TestDr
     @Override
     public List<TestDriveResponse> getAllTestDrives() {
         String currentUserId = SecurityUtils.getCurrentUserId();
-        boolean isAdminOrManager = SecurityUtils.hasRole("ADMIN") || SecurityUtils.hasRole("MANAGER");
+        boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
 
         List<TestDriveRequest> requests = testDriveRepository.findAll();
 
@@ -88,7 +88,7 @@ public class TestDriveServiceImpl extends BaseTestDriveService implements TestDr
     @Override
     public TestDriveListResponse getTestDrivesWithFilters(TestDriveFilterRequest filter) {
         String currentUserId = SecurityUtils.getCurrentUserId();
-        boolean isAdminOrManager = SecurityUtils.hasRole("ADMIN") || SecurityUtils.hasRole("MANAGER");
+        boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
 
         if (!isAdminOrManager) {
             filter.setClientId(currentUserId);

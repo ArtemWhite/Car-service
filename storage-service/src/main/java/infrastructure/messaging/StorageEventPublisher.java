@@ -32,24 +32,30 @@ public class StorageEventPublisher {
     public void publishOrderApproved(OrderApprovedEvent event) {
         try {
             String payload = objectMapper.writeValueAsString(event);
-            kafkaTemplate.send(storageEventsTopic, event.getOrderId(), payload);
-            log.info("Published OrderApprovedEvent for orderId: {}, assemblyOrderId: {}",
-                    event.getOrderId(), event.getAssemblyOrderId());
+            kafkaTemplate.send(storageEventsTopic, event.getOrderId(), payload)
+                    .addCallback(
+                            result -> log.info("Published OrderApprovedEvent for orderId: {}, assemblyOrderId: {}",
+                                    event.getOrderId(), event.getAssemblyOrderId()),
+                            ex -> log.error("Failed to publish OrderApprovedEvent for orderId: {}: {}",
+                                    event.getOrderId(), ex.getMessage())
+                    );
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize OrderApprovedEvent for orderId: {}", event.getOrderId(), e);
-            throw new RuntimeException("Failed to publish OrderApprovedEvent", e);
         }
     }
 
     public void publishOrderRejected(OrderRejectedEvent event) {
         try {
             String payload = objectMapper.writeValueAsString(event);
-            kafkaTemplate.send(storageEventsTopic, event.getOrderId(), payload);
-            log.info("Published OrderRejectedEvent for orderId: {}, reason: {}",
-                    event.getOrderId(), event.getReason());
+            kafkaTemplate.send(storageEventsTopic, event.getOrderId(), payload)
+                    .addCallback(
+                            result -> log.info("Published OrderRejectedEvent for orderId: {}, reason: {}",
+                                    event.getOrderId(), event.getReason()),
+                            ex -> log.error("Failed to publish OrderRejectedEvent for orderId: {}: {}",
+                                    event.getOrderId(), ex.getMessage())
+                    );
         } catch (JsonProcessingException e) {
             log.error("Failed to serialize OrderRejectedEvent for orderId: {}", event.getOrderId(), e);
-            throw new RuntimeException("Failed to publish OrderRejectedEvent", e);
         }
     }
 }

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="testdrive-1" author="ArtemWhite">
+        <createTable tableName="test_drive_requests">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="client_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="car_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="manager_id" type="VARCHAR(36)"/>
+            <column name="requested_time" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="confirmed_time" type="TIMESTAMP"/>
+            <column name="status_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_test_drive_status" references="test_drive_statuses(id)"/>
+            </column>
+            <column name="notes" type="VARCHAR(500)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

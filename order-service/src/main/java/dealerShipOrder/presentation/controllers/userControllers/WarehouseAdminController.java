@@ -24,7 +24,7 @@ public class WarehouseAdminController {
 
     @PostMapping("/sections/{sectionId}/assign")
     @Operation(summary = "Assign to section")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<WarehouseAdminPresentationResponse> assignToSection(@PathVariable String sectionId) {
         var response = warehouseAdminService.assignToSection(sectionId);
         return ResponseEntity.ok(mapper.toWarehouseAdminPresentation(response));
@@ -32,7 +32,7 @@ public class WarehouseAdminController {
 
     @DeleteMapping("/sections/{sectionId}/remove")
     @Operation(summary = "Remove from section")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<WarehouseAdminPresentationResponse> removeFromSection(@PathVariable String sectionId) {
         var response = warehouseAdminService.removeFromSection(sectionId);
         return ResponseEntity.ok(mapper.toWarehouseAdminPresentation(response));
@@ -40,7 +40,7 @@ public class WarehouseAdminController {
 
     @GetMapping("/sections")
     @Operation(summary = "Get managed sections")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<ManagedSectionsPresentationResponse> getManagedSections() {
         var response = warehouseAdminService.getManagedSections();
         return ResponseEntity.ok(mapper.toManagedSectionsPresentation(response));
@@ -48,7 +48,7 @@ public class WarehouseAdminController {
 
     @PostMapping("/shift/start")
     @Operation(summary = "Start shift")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<WarehouseAdminPresentationResponse> startShift() {
         var response = warehouseAdminService.startShift();
         return ResponseEntity.ok(mapper.toWarehouseAdminPresentation(response));
@@ -56,7 +56,7 @@ public class WarehouseAdminController {
 
     @PostMapping("/shift/end")
     @Operation(summary = "End shift")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<WarehouseAdminPresentationResponse> endShift() {
         var response = warehouseAdminService.endShift();
         return ResponseEntity.ok(mapper.toWarehouseAdminPresentation(response));
@@ -64,7 +64,7 @@ public class WarehouseAdminController {
 
     @GetMapping("/shift/status")
     @Operation(summary = "Check if on duty")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<OnDutyPresentationResponse> isOnDuty() {
         var response = warehouseAdminService.isOnDuty();
         return ResponseEntity.ok(mapper.toOnDutyPresentation(response));
@@ -72,7 +72,7 @@ public class WarehouseAdminController {
 
     @GetMapping("/history")
     @Operation(summary = "Get operation history")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<OperationHistoryListPresentationResponse> getOperationHistory() {
         var response = warehouseAdminService.getOperationHistory();
         return ResponseEntity.ok(mapper.toOperationHistoryListPresentation(response));
@@ -80,7 +80,7 @@ public class WarehouseAdminController {
 
     @GetMapping("/history/date-range")
     @Operation(summary = "Get operations by date range")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<OperationHistoryListPresentationResponse> getOperationsByDate(
             @RequestParam String from,
             @RequestParam String to) {
@@ -90,7 +90,7 @@ public class WarehouseAdminController {
 
     @GetMapping("/history/type/{operationType}")
     @Operation(summary = "Get operations by type")
-    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<OperationHistoryListPresentationResponse> getOperationsByType(@PathVariable String operationType) {
         var response = warehouseAdminService.getOperationsByType(operationType);
         return ResponseEntity.ok(mapper.toOperationHistoryListPresentation(response));

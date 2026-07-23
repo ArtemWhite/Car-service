@@ -1,6 +1,6 @@
 package dealerShipOrder.infrastructure.config;
 
-import infrastructure.security.KeycloakJwtAuthenticationConverter;
+import dealerShipOrder.infrastructure.security.KeycloakJwtAuthenticationConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,8 +40,8 @@ public class SecurityConfig {
                         "/actuator/health"
                 ).permitAll()
                 .antMatchers("/api/client/**").hasRole("CLIENT")
-                .antMatchers("/api/manager/**").hasAnyRole("MANAGER", "ADMIN")
-                .antMatchers("/api/admin/**").hasRole("ADMIN")
+                .antMatchers("/api/manager/**").hasAnyRole("MANAGER", "SYSTEM_ADMIN")
+                .antMatchers("/api/admin/**").hasRole("SYSTEM_ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer()
