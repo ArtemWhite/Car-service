@@ -44,7 +44,7 @@ bin/
 
 ### IDEA ###
 !**/.idea/
-.idea
+.idea/*
 df
 dependencies.txt
-logs
+logs/*
