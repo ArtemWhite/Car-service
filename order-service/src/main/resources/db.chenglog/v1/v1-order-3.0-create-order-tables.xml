@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- orders -->
+    <changeSet id="300" author="developer">
+        <createTable tableName="orders">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="client_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="manager_id" type="VARCHAR(36)"/>
+            <column name="type_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="completed_at" type="TIMESTAMP"/>
+            <column name="car_id" type="VARCHAR(36)"/>
+            <column name="configuration_id" type="VARCHAR(36)"/>
+            <column name="car_model_id" type="VARCHAR(36)"/>
+            <column name="notes" type="VARCHAR(500)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_order_type"
+                baseTableName="orders" baseColumnNames="type_id"
+                referencedTableName="order_types" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_order_status"
+                baseTableName="orders" baseColumnNames="status_id"
+                referencedTableName="order_statuses" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- order_history_entries -->
+    <changeSet id="301" author="developer">
+        <createTable tableName="order_history_entries">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="order_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)"/>
+            <column name="entry_timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_history_order"
+                baseTableName="order_history_entries" baseColumnNames="order_id"
+                referencedTableName="orders" referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

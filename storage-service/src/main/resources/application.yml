@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: storage-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5434/storage_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: storage-service-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
+      enable-idempotence: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/car-dealership
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+server:
+  port: 8082
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    com.dealership.storage: DEBUG
+    org.springframework.kafka: DEBUG
+    org.springframework.security: INFO
+    io.grpc: DEBUG
+    net.devh: DEBUG
+
+app:
+  kafka:
+    topic:
+      order-events: order-events
+      storage-events: storage-events
+  order-service:
+    url: http://localhost:8081/api
+
+grpc:
+  server:
+    port: 9090
+    max-inbound-message-size: 10MB
+    keep-alive-time: 30s
+    keep-alive-timeout: 5s

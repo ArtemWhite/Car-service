@@ -1,0 +1,625 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ===== WAREHOUSE POSITIONS ===== -->
+    <changeSet id="2000" author="developer">
+        <insert tableName="warehouse_positions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="STOREKEEPER"/>
+            <column name="display_name" value="Кладовщик"/>
+        </insert>
+        <insert tableName="warehouse_positions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SENIOR_STOREKEEPER"/>
+            <column name="display_name" value="Старший кладовщик"/>
+        </insert>
+        <insert tableName="warehouse_positions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="WAREHOUSE_MANAGER"/>
+            <column name="display_name" value="Заведующий складом"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== OPERATION TYPES ===== -->
+    <changeSet id="2001" author="developer">
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ARRIVAL"/>
+            <column name="display_name" value="Поступление"/>
+        </insert>
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="REMOVAL"/>
+            <column name="display_name" value="Выбытие"/>
+        </insert>
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MOVE"/>
+            <column name="display_name" value="Перемещение"/>
+        </insert>
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="WRITE_OFF"/>
+            <column name="display_name" value="Списание"/>
+        </insert>
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="INVENTORY_START"/>
+            <column name="display_name" value="Начало инвентаризации"/>
+        </insert>
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="INVENTORY_COMPLETE"/>
+            <column name="display_name" value="Завершение инвентаризации"/>
+        </insert>
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="QUANTITY_CHANGE"/>
+            <column name="display_name" value="Изменение количества"/>
+        </insert>
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SHIFT_START"/>
+            <column name="display_name" value="Начало смены"/>
+        </insert>
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SHIFT_END"/>
+            <column name="display_name" value="Конец смены"/>
+        </insert>
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="UPDATE"/>
+            <column name="display_name" value="Обновление"/>
+        </insert>
+        <insert tableName="operation_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="DISCREPANCY"/>
+            <column name="display_name" value="Расхождение"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== ITEM TYPES ===== -->
+    <changeSet id="2002" author="developer">
+        <insert tableName="item_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SPARE_PART"/>
+            <column name="display_name" value="Запчасть"/>
+        </insert>
+        <insert tableName="item_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CAR"/>
+            <column name="display_name" value="Автомобиль"/>
+        </insert>
+        <insert tableName="item_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="EQUIPMENT"/>
+            <column name="display_name" value="Оборудование"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== CAR BODIES ===== -->
+    <changeSet id="2003" author="developer">
+        <insert tableName="car_bodies">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SEDAN"/>
+            <column name="display_name" value="Седан"/>
+        </insert>
+        <insert tableName="car_bodies">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="HATCHBACK"/>
+            <column name="display_name" value="Хэтчбек"/>
+        </insert>
+        <insert tableName="car_bodies">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SUV"/>
+            <column name="display_name" value="Внедорожник"/>
+        </insert>
+        <insert tableName="car_bodies">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="COUPE"/>
+            <column name="display_name" value="Купе"/>
+        </insert>
+        <insert tableName="car_bodies">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CONVERTIBLE"/>
+            <column name="display_name" value="Кабриолет"/>
+        </insert>
+        <insert tableName="car_bodies">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="STATION_WAGON"/>
+            <column name="display_name" value="Универсал"/>
+        </insert>
+        <insert tableName="car_bodies">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MINIVAN"/>
+            <column name="display_name" value="Минивэн"/>
+        </insert>
+        <insert tableName="car_bodies">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="PICKUP"/>
+            <column name="display_name" value="Пикап"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== CAR BRANDS ===== -->
+    <changeSet id="2004" author="developer">
+        <insert tableName="car_brands">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="BMW"/>
+            <column name="display_name" value="BMW"/>
+            <column name="country_made" value="Germany"/>
+        </insert>
+        <insert tableName="car_brands">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="AUDI"/>
+            <column name="display_name" value="Audi"/>
+            <column name="country_made" value="Germany"/>
+        </insert>
+        <insert tableName="car_brands">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MERCEDES"/>
+            <column name="display_name" value="Mercedes-Benz"/>
+            <column name="country_made" value="Germany"/>
+        </insert>
+        <insert tableName="car_brands">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="TOYOTA"/>
+            <column name="display_name" value="Toyota"/>
+            <column name="country_made" value="Japan"/>
+        </insert>
+        <insert tableName="car_brands">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="VOLKSWAGEN"/>
+            <column name="display_name" value="Volkswagen"/>
+            <column name="country_made" value="Germany"/>
+        </insert>
+        <insert tableName="car_brands">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="HYUNDAI"/>
+            <column name="display_name" value="Hyundai"/>
+            <column name="country_made" value="South Korea"/>
+        </insert>
+        <insert tableName="car_brands">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="KIA"/>
+            <column name="display_name" value="Kia"/>
+            <column name="country_made" value="South Korea"/>
+        </insert>
+        <insert tableName="car_brands">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="RENAULT"/>
+            <column name="display_name" value="Renault"/>
+            <column name="country_made" value="France"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== CAR COLORS ===== -->
+    <changeSet id="2005" author="developer">
+        <insert tableName="car_colors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="WHITE"/>
+            <column name="display_name" value="Белый"/>
+            <column name="is_default" valueBoolean="true"/>
+            <column name="color_price" valueNumeric="0"/>
+        </insert>
+        <insert tableName="car_colors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="BLACK"/>
+            <column name="display_name" value="Чёрный"/>
+            <column name="color_price" valueNumeric="0"/>
+        </insert>
+        <insert tableName="car_colors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SILVER"/>
+            <column name="display_name" value="Серебристый"/>
+            <column name="color_price" valueNumeric="0"/>
+        </insert>
+        <insert tableName="car_colors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="RED"/>
+            <column name="display_name" value="Красный"/>
+            <column name="color_price" valueNumeric="0"/>
+        </insert>
+        <insert tableName="car_colors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="BLUE"/>
+            <column name="display_name" value="Синий"/>
+            <column name="color_price" valueNumeric="0"/>
+        </insert>
+        <insert tableName="car_colors">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="GREY"/>
+            <column name="display_name" value="Серый"/>
+            <column name="color_price" valueNumeric="0"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== CAR MODELS ===== -->
+    <changeSet id="2006" author="developer">
+        <!-- BMW -->
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="X5"/>
+            <column name="full_name" value="BMW X5"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'BMW')"/>
+            <column name="generation" value="G05"/>
+        </insert>
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="X3"/>
+            <column name="full_name" value="BMW X3"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'BMW')"/>
+            <column name="generation" value="G01"/>
+        </insert>
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="3 Series"/>
+            <column name="full_name" value="BMW 3 Series"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'BMW')"/>
+            <column name="generation" value="G20"/>
+        </insert>
+        <!-- AUDI -->
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="A4"/>
+            <column name="full_name" value="Audi A4"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'AUDI')"/>
+            <column name="generation" value="B9"/>
+        </insert>
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="A6"/>
+            <column name="full_name" value="Audi A6"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'AUDI')"/>
+            <column name="generation" value="C8"/>
+        </insert>
+        <!-- MERCEDES -->
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="E-Class"/>
+            <column name="full_name" value="Mercedes-Benz E-Class"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'MERCEDES')"/>
+            <column name="generation" value="W213"/>
+        </insert>
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="C-Class"/>
+            <column name="full_name" value="Mercedes-Benz C-Class"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'MERCEDES')"/>
+            <column name="generation" value="W206"/>
+        </insert>
+        <!-- TOYOTA -->
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Camry"/>
+            <column name="full_name" value="Toyota Camry"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'TOYOTA')"/>
+            <column name="generation" value="XV70"/>
+        </insert>
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="RAV4"/>
+            <column name="full_name" value="Toyota RAV4"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'TOYOTA')"/>
+            <column name="generation" value="XA50"/>
+        </insert>
+        <!-- VOLKSWAGEN -->
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Passat"/>
+            <column name="full_name" value="Volkswagen Passat"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'VOLKSWAGEN')"/>
+            <column name="generation" value="B8"/>
+        </insert>
+        <insert tableName="car_models">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="Tiguan"/>
+            <column name="full_name" value="Volkswagen Tiguan"/>
+            <column name="brand_id" valueComputed="(SELECT id FROM car_brands WHERE name = 'VOLKSWAGEN')"/>
+            <column name="generation" value="II"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== DRIVE TYPES ===== -->
+    <changeSet id="2007" author="developer">
+        <insert tableName="drive_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="FRONT"/>
+            <column name="display_name" value="Передний"/>
+            <column name="code_name" value="FWD"/>
+        </insert>
+        <insert tableName="drive_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="REAR"/>
+            <column name="display_name" value="Задний"/>
+            <column name="code_name" value="RWD"/>
+        </insert>
+        <insert tableName="drive_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="FULL"/>
+            <column name="display_name" value="Полный"/>
+            <column name="code_name" value="AWD"/>
+        </insert>
+        <insert tableName="drive_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="PART_TIME"/>
+            <column name="display_name" value="Подключаемый"/>
+            <column name="code_name" value="4WD"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== CAR STATUSES ===== -->
+    <changeSet id="2008" author="developer">
+        <insert tableName="car_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="AVAILABLE"/>
+            <column name="display_name" value="В наличии"/>
+        </insert>
+        <insert tableName="car_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SOLD"/>
+            <column name="display_name" value="Продан"/>
+        </insert>
+        <insert tableName="car_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="RESERVED"/>
+            <column name="display_name" value="Зарезервирован"/>
+        </insert>
+        <insert tableName="car_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ON_TEST_DRIVE"/>
+            <column name="display_name" value="На тест-драйве"/>
+        </insert>
+        <insert tableName="car_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="TEST_DRIVE_AVAILABLE"/>
+            <column name="display_name" value="Доступен для тест-драйва"/>
+        </insert>
+        <insert tableName="car_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="IN_SERVICE"/>
+            <column name="display_name" value="На обслуживании"/>
+        </insert>
+        <insert tableName="car_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="BOOKED"/>
+            <column name="display_name" value="Забронирован"/>
+        </insert>
+        <insert tableName="car_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="UNAVAILABLE"/>
+            <column name="display_name" value="Недоступен"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== ENGINE FUEL TYPES ===== -->
+    <changeSet id="2009" author="developer">
+        <insert tableName="engine_fuel_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="PETROL"/>
+            <column name="display_name" value="Бензин"/>
+        </insert>
+        <insert tableName="engine_fuel_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="DIESEL"/>
+            <column name="display_name" value="Дизель"/>
+        </insert>
+        <insert tableName="engine_fuel_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ELECTRIC"/>
+            <column name="display_name" value="Электро"/>
+        </insert>
+        <insert tableName="engine_fuel_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="HYBRID"/>
+            <column name="display_name" value="Гибрид"/>
+        </insert>
+        <insert tableName="engine_fuel_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="PLUGIN_HYBRID"/>
+            <column name="display_name" value="Подзаряжаемый гибрид"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== TRANSMISSION TYPES ===== -->
+    <changeSet id="2010" author="developer">
+        <insert tableName="transmission_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MANUAL"/>
+            <column name="display_name" value="Механическая"/>
+        </insert>
+        <insert tableName="transmission_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="AUTOMATIC"/>
+            <column name="display_name" value="Автоматическая"/>
+        </insert>
+        <insert tableName="transmission_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CVT"/>
+            <column name="display_name" value="Вариатор"/>
+        </insert>
+        <insert tableName="transmission_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ROBOT"/>
+            <column name="display_name" value="Роботизированная"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== COMPONENT TYPES ===== -->
+    <changeSet id="2011" author="developer">
+        <insert tableName="component_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="AUDIO"/>
+            <column name="display_name" value="Аудиосистема"/>
+        </insert>
+        <insert tableName="component_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CLIMATE"/>
+            <column name="display_name" value="Климат-контроль"/>
+        </insert>
+        <insert tableName="component_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SEATS"/>
+            <column name="display_name" value="Сиденья"/>
+        </insert>
+        <insert tableName="component_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SAFETY"/>
+            <column name="display_name" value="Безопасность"/>
+        </insert>
+        <insert tableName="component_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="WHEELS"/>
+            <column name="display_name" value="Колёса"/>
+        </insert>
+        <insert tableName="component_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="LIGHTS"/>
+            <column name="display_name" value="Освещение"/>
+        </insert>
+        <insert tableName="component_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="PARKING"/>
+            <column name="display_name" value="Парковка"/>
+        </insert>
+        <insert tableName="component_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ASSIST"/>
+            <column name="display_name" value="Ассистенты"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== SPARE TYPES ===== -->
+    <changeSet id="2012" author="developer">
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="OIL_FILTER"/>
+            <column name="display_name" value="Масляный фильтр"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="AIR_FILTER"/>
+            <column name="display_name" value="Воздушный фильтр"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="BRAKE_PADS"/>
+            <column name="display_name" value="Тормозные колодки"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="BRAKE_DISCS"/>
+            <column name="display_name" value="Тормозные диски"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SPARK_PLUG"/>
+            <column name="display_name" value="Свечи зажигания"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="BATTERY"/>
+            <column name="display_name" value="Аккумулятор"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="TIMING_BELT"/>
+            <column name="display_name" value="Ремень ГРМ"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ALTERNATOR"/>
+            <column name="display_name" value="Генератор"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="STARTER"/>
+            <column name="display_name" value="Стартер"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SHOCK_ABSORBER"/>
+            <column name="display_name" value="Амортизатор"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="TIRE"/>
+            <column name="display_name" value="Шина"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="WHEEL"/>
+            <column name="display_name" value="Диск колесный"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="HEADLIGHT"/>
+            <column name="display_name" value="Фара"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="RADIATOR"/>
+            <column name="display_name" value="Радиатор"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SENSOR"/>
+            <column name="display_name" value="Датчик"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="WIPER"/>
+            <column name="display_name" value="Щетки стеклоочистителя"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="OIL"/>
+            <column name="display_name" value="Моторное масло"/>
+        </insert>
+        <insert tableName="spare_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="COOLANT"/>
+            <column name="display_name" value="Охлаждающая жидкость"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== ENGINES (реальные данные) ===== -->
+    <changeSet id="2013" author="developer">
+        <insert tableName="engines">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="fuel_type_id" valueComputed="(SELECT id FROM engine_fuel_types WHERE name = 'PETROL')"/>
+            <column name="displacement" valueNumeric="2.0"/>
+            <column name="horse_power" valueNumeric="249.0"/>
+            <column name="description" value="2.0L Turbocharged"/>
+        </insert>
+        <insert tableName="engines">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="fuel_type_id" valueComputed="(SELECT id FROM engine_fuel_types WHERE name = 'DIESEL')"/>
+            <column name="displacement" valueNumeric="2.0"/>
+            <column name="horse_power" valueNumeric="190.0"/>
+            <column name="description" value="2.0L Diesel"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== TRANSMISSIONS (реальные данные) ===== -->
+    <changeSet id="2014" author="developer">
+        <insert tableName="transmissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="type_id" valueComputed="(SELECT id FROM transmission_types WHERE name = 'AUTOMATIC')"/>
+            <column name="gears" valueNumeric="8"/>
+            <column name="full_name" value="8-speed Automatic"/>
+        </insert>
+        <insert tableName="transmissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="type_id" valueComputed="(SELECT id FROM transmission_types WHERE name = 'MANUAL')"/>
+            <column name="gears" valueNumeric="6"/>
+            <column name="full_name" value="6-speed Manual"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

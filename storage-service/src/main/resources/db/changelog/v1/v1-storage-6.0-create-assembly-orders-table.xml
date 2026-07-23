@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- assembly_orders -->
+    <changeSet id="800" author="developer">
+        <createTable tableName="assembly_orders">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="source_order_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_type" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="car_id" type="VARCHAR(36)"/>
+            <column name="configuration_id" type="VARCHAR(36)"/>
+            <column name="car_model_id" type="VARCHAR(36)"/>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="responsible_warehouse_admin_id" type="VARCHAR(36)"/>
+            <column name="created_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <createIndex tableName="assembly_orders" indexName="idx_assembly_source_order">
+            <column name="source_order_id"/>
+        </createIndex>
+
+        <createIndex tableName="assembly_orders" indexName="idx_assembly_status">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: order-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/order_db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
+    enabled: true
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: order-service-group
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+      retries: 3
+      enable-idempotence: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/car-dealership
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+server:
+  port: 8081
+  servlet:
+    context-path: /api
+
+logging:
+  level:
+    com.dealership.order: DEBUG
+    org.springframework.kafka: DEBUG
+    org.springframework.security: INFO
+    io.grpc: DEBUG
+    net.devh: DEBUG
+
+app:
+  kafka:
+    topic:
+      order-events: order-events
+      storage-events: storage-events
+  outbox:
+    batch-size: 100
+    relay-interval: 5000
+    cleanup-interval: 3600000
+
+grpc:
+  client:
+    storage-service:
+      address: localhost:9090
+      negotiation-type: plaintext
+      max-inbound-message-size: 10MB
+      keep-alive-time: 30s
+      keep-alive-timeout: 5s

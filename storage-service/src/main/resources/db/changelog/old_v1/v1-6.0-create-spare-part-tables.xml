@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- spare_parts -->
+    <changeSet id="500" author="developer">
+        <createTable tableName="spare_parts">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="type_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="VARCHAR(500)"/>
+            <column name="manufacturer" type="VARCHAR(100)"/>
+            <column name="part_number" type="VARCHAR(100)"/>
+            <column name="price" type="DECIMAL(19,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="VARCHAR(3)" defaultValue="RUB"/>
+            <column name="stock_quantity" type="INT" defaultValueNumeric="0"/>
+            <column name="section_id" type="VARCHAR(50)"/>
+            <column name="location" type="VARCHAR(100)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_spare_part_type"
+                baseTableName="spare_parts" baseColumnNames="type_id"
+                referencedTableName="spare_types" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- spare_part_compatibilities -->
+    <changeSet id="501" author="developer">
+        <createTable tableName="spare_part_compatibilities">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="spare_part_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="car_model_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_compat_spare_part"
+                baseTableName="spare_part_compatibilities" baseColumnNames="spare_part_id"
+                referencedTableName="spare_parts" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_compat_car_model"
+                baseTableName="spare_part_compatibilities" baseColumnNames="car_model_id"
+                referencedTableName="car_models" referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- ===== USER STATUSES ===== -->
+    <changeSet id="1000" author="developer">
+        <insert tableName="user_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ACTIVE"/>
+            <column name="display_name" value="Активен"/>
+            <column name="can_authenticate" valueBoolean="true"/>
+        </insert>
+        <insert tableName="user_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="INACTIVE"/>
+            <column name="display_name" value="Неактивен"/>
+            <column name="can_authenticate" valueBoolean="false"/>
+        </insert>
+        <insert tableName="user_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="BLOCKED"/>
+            <column name="display_name" value="Заблокирован"/>
+            <column name="can_authenticate" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== USER TYPES ===== -->
+    <changeSet id="1001" author="developer">
+        <insert tableName="user_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CLIENT"/>
+            <column name="display_name" value="Клиент"/>
+        </insert>
+        <insert tableName="user_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MANAGER"/>
+            <column name="display_name" value="Менеджер"/>
+        </insert>
+        <insert tableName="user_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SYSTEM_ADMIN"/>
+            <column name="display_name" value="Системный администратор"/>
+        </insert>
+        <insert tableName="user_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="WAREHOUSE_ADMIN"/>
+            <column name="display_name" value="Складской администратор"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== MANAGER POSITIONS ===== -->
+    <changeSet id="1002" author="developer">
+        <insert tableName="manager_positions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SALES_MANAGER"/>
+            <column name="display_name" value="Менеджер по продажам"/>
+            <column name="max_concurrent_orders" valueNumeric="10"/>
+            <column name="max_concurrent_test_drives" valueNumeric="5"/>
+        </insert>
+        <insert tableName="manager_positions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SENIOR_MANAGER"/>
+            <column name="display_name" value="Старший менеджер"/>
+            <column name="max_concurrent_orders" valueNumeric="15"/>
+            <column name="max_concurrent_test_drives" valueNumeric="10"/>
+        </insert>
+        <insert tableName="manager_positions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="LEAD_MANAGER"/>
+            <column name="display_name" value="Ведущий менеджер"/>
+            <column name="max_concurrent_orders" valueNumeric="20"/>
+            <column name="max_concurrent_test_drives" valueNumeric="15"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== ADMIN LEVELS ===== -->
+    <changeSet id="1003" author="developer">
+        <insert tableName="admin_levels">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SUPER_ADMIN"/>
+            <column name="display_name" value="Супер администратор"/>
+            <column name="level" valueNumeric="100"/>
+        </insert>
+        <insert tableName="admin_levels">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ADMIN"/>
+            <column name="display_name" value="Администратор"/>
+            <column name="level" valueNumeric="50"/>
+        </insert>
+        <insert tableName="admin_levels">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SUPPORT"/>
+            <column name="display_name" value="Поддержка"/>
+            <column name="level" valueNumeric="10"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== SYSTEM PERMISSIONS ===== -->
+    <changeSet id="1004" author="developer">
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CREATE_USER"/>
+            <column name="display_name" value="Создание пользователей"/>
+            <column name="category" value="USER"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="UPDATE_USER"/>
+            <column name="display_name" value="Редактирование пользователей"/>
+            <column name="category" value="USER"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="DELETE_USER"/>
+            <column name="display_name" value="Удаление пользователей"/>
+            <column name="category" value="USER"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="VIEW_USERS"/>
+            <column name="display_name" value="Просмотр пользователей"/>
+            <column name="category" value="USER"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="BLOCK_USER"/>
+            <column name="display_name" value="Блокировка пользователей"/>
+            <column name="category" value="USER"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="VIEW_ORDERS"/>
+            <column name="display_name" value="Просмотр заказов"/>
+            <column name="category" value="ORDER"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="UPDATE_ORDER"/>
+            <column name="display_name" value="Обновление заказа"/>
+            <column name="category" value="ORDER"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CANCEL_ORDER"/>
+            <column name="display_name" value="Отмена заказа"/>
+            <column name="category" value="ORDER"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="VIEW_TEST_DRIVES"/>
+            <column name="display_name" value="Просмотр тест-драйвов"/>
+            <column name="category" value="TEST_DRIVE"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="UPDATE_TEST_DRIVE"/>
+            <column name="display_name" value="Обновление тест-драйва"/>
+            <column name="category" value="TEST_DRIVE"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MANAGE_PERMISSIONS"/>
+            <column name="display_name" value="Управление правами"/>
+            <column name="category" value="ADMIN"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="VIEW_AUDIT_LOG"/>
+            <column name="display_name" value="Просмотр аудита"/>
+            <column name="category" value="AUDIT"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SYSTEM_CONFIG"/>
+            <column name="display_name" value="Настройка системы"/>
+            <column name="category" value="SYSTEM"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== ORDER STATUSES ===== -->
+    <changeSet id="1005" author="developer">
+        <insert tableName="order_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CREATED"/>
+            <column name="display_name" value="Оформлен"/>
+        </insert>
+        <insert tableName="order_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MANAGER_APPROVED"/>
+            <column name="display_name" value="Согласован менеджером"/>
+        </insert>
+        <insert tableName="order_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="AWAITING_PAYMENT"/>
+            <column name="display_name" value="Ожидает оплаты"/>
+        </insert>
+        <insert tableName="order_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="PAID"/>
+            <column name="display_name" value="Оплачен"/>
+        </insert>
+        <insert tableName="order_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="READY_FOR_PICKUP"/>
+            <column name="display_name" value="Автомобиль готов к выдаче"/>
+        </insert>
+        <insert tableName="order_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="COMPLETED"/>
+            <column name="display_name" value="Завершён"/>
+        </insert>
+        <insert tableName="order_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CANCELLED"/>
+            <column name="display_name" value="Отменён"/>
+        </insert>
+        <insert tableName="order_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="STOCK_CONFIRMED"/>
+            <column name="display_name" value="Согласован складом"/>
+        </insert>
+        <insert tableName="order_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="AWAITING_DELIVERY"/>
+            <column name="display_name" value="Ожидает доставки"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== ORDER TYPES ===== -->
+    <changeSet id="1006" author="developer">
+        <insert tableName="order_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="IN_STOCK"/>
+            <column name="display_name" value="Заказ на автомобиль в наличии"/>
+        </insert>
+        <insert tableName="order_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CUSTOM"/>
+            <column name="display_name" value="Заказ на автомобиль с конфигурацией"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== PAYMENT METHODS ===== -->
+    <changeSet id="1007" author="developer">
+        <insert tableName="payment_methods">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CASH"/>
+            <column name="display_name" value="Наличные"/>
+        </insert>
+        <insert tableName="payment_methods">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CARD"/>
+            <column name="display_name" value="Банковская карта"/>
+        </insert>
+        <insert tableName="payment_methods">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ONLINE"/>
+            <column name="display_name" value="Онлайн-оплата"/>
+        </insert>
+        <insert tableName="payment_methods">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="INSTALLMENT"/>
+            <column name="display_name" value="Рассрочка"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== PAYMENT STATUSES ===== -->
+    <changeSet id="1008" author="developer">
+        <insert tableName="payment_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="PENDING"/>
+            <column name="display_name" value="Ожидает оплаты"/>
+        </insert>
+        <insert tableName="payment_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="PROCESSING"/>
+            <column name="display_name" value="Обрабатывается"/>
+        </insert>
+        <insert tableName="payment_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="COMPLETED"/>
+            <column name="display_name" value="Оплачен"/>
+        </insert>
+        <insert tableName="payment_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="FAILED"/>
+            <column name="display_name" value="Ошибка оплаты"/>
+        </insert>
+        <insert tableName="payment_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="REFUNDED"/>
+            <column name="display_name" value="Возврат"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== TEST DRIVE STATUSES ===== -->
+    <changeSet id="1009" author="developer">
+        <insert tableName="test_drive_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="PENDING"/>
+            <column name="display_name" value="Ожидает подтверждения"/>
+        </insert>
+        <insert tableName="test_drive_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CONFIRMED"/>
+            <column name="display_name" value="Подтверждён"/>
+        </insert>
+        <insert tableName="test_drive_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="COMPLETED"/>
+            <column name="display_name" value="Проведён"/>
+        </insert>
+        <insert tableName="test_drive_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CANCELLED"/>
+            <column name="display_name" value="Отменён"/>
+        </insert>
+        <insert tableName="test_drive_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="NO_SHOW"/>
+            <column name="display_name" value="Клиент не пришёл"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package com.dealershipOrder.grpc;
+
+option java_multiple_files = true;
+option java_package = "com.dealershipOrder.grpc";
+option java_outer_classname = "CarServiceProto";
+
+service CarService {
+    rpc GetAvailableCars (EmptyRequest) returns (CarListResponse);
+
+    rpc GetCarById (CarIdRequest) returns (CarResponse);
+}
+
+message EmptyRequest {
+}
+
+message CarIdRequest {
+    string id = 1;
+}
+
+message CarListResponse {
+    repeated CarResponse cars = 1;
+    int32 total_count = 2;
+}
+
+message CarResponse {
+    string id = 1;
+    string brand = 2;
+    string model = 3;
+    string body_type = 4;
+    string color = 5;
+    string drive_type = 6;
+
+    EngineInfo engine = 7;
+    TransmissionInfo transmission = 8;
+
+    double price = 9;
+    string currency = 10;
+    string status = 11;
+    bool available_for_purchase = 12;
+
+    string configuration_id = 13;
+    string configuration_name = 14;
+    string car_info = 15;
+}
+
+message EngineInfo {
+    string fuel_type = 1;
+    double power = 2;
+    double displacement = 3;
+    string description = 4;
+}
+
+message TransmissionInfo {
+    string type = 1;
+    int32 gears = 2;
+    string description = 3;
+}

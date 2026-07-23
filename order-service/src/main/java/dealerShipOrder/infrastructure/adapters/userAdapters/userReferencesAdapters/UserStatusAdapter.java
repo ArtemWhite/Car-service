@@ -1,0 +1,63 @@
+package dealerShipOrder.infrastructure.adapters.userAdapters.userReferencesAdapters;
+
+import dealerShipOrder.domain.models.users.*;
+import dealerShipOrder.infrastructure.entities.userEntities.ClientEntity;
+import dealerShipOrder.infrastructure.entities.userEntities.managerEntities.ManagerEntity;
+import dealerShipOrder.infrastructure.entities.userEntities.systemAdminEntities.SystemAdminEntity;
+import dealerShipOrder.infrastructure.entities.userEntities.warehouseAdminEntities.WarehouseAdminEntity;
+import dealerShipOrder.infrastructure.jpaRepository.userJpaRepositories.UserJpaRepository;
+import dealerShipOrder.infrastructure.mappers.userEntitiesMappers.userMappers.clientEntitiesMappers.ClientEntityMapper;
+import dealerShipOrder.infrastructure.mappers.userEntitiesMappers.userMappers.managerEntitiesMappers.ManagerEntityMapper;
+import dealerShipOrder.infrastructure.mappers.userEntitiesMappers.userMappers.systemAdminEntitiesMappers.SystemAdminEntityMapper;
+import dealerShipOrder.infrastructure.mappers.userEntitiesMappers.userMappers.warehouseAdminEntitiesMappers.WarehouseAdminEntityMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component
+@RequiredArgsConstructor
+public class UserStatusAdapter {
+
+    private final UserJpaRepository jpaRepository;
+    private final ClientEntityMapper clientMapper;
+    private final ManagerEntityMapper managerMapper;
+    private final SystemAdminEntityMapper systemAdminMapper;
+    private final WarehouseAdminEntityMapper warehouseAdminMapper;
+
+    public List<User> findByStatus(UserStatus status) {
+        return jpaRepository.findByStatus(status.name()).stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    public List<User> findActiveUsers() {
+        return findByStatus(UserStatus.ACTIVE);
+    }
+
+    public List<User> findInactiveUsers() {
+        return findByStatus(UserStatus.INACTIVE);
+    }
+
+    public List<User> findBlockedUsers() {
+        return findByStatus(UserStatus.BLOCKED);
+    }
+
+    public long countByStatus(UserStatus status) {
+        return jpaRepository.findByStatus(status.name()).size();
+    }
+
+    private User toDomain(dealerShipOrder.infrastructure.entities.userEntities.UserEntity entity) {
+        if (entity instanceof ClientEntity clientEntity) {
+            return clientMapper.toDomain(clientEntity);
+        } else if (entity instanceof ManagerEntity managerEntity) {
+            return managerMapper.toDomain(managerEntity);
+        } else if (entity instanceof SystemAdminEntity systemAdminEntity) {
+            return systemAdminMapper.toDomain(systemAdminEntity);
+        } else if (entity instanceof WarehouseAdminEntity warehouseAdminEntity) {
+            return warehouseAdminMapper.toDomain(warehouseAdminEntity);
+        }
+        throw new IllegalArgumentException("Unknown entity type: " + entity.getClass());
+    }
+}

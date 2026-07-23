@@ -1,0 +1,384 @@
+2026-04-01 14:28:46 [main] INFO  org.example.AutoDealerApplication - Starting AutoDealerApplication using Java 21.0.1 on Say_my_name with PID 37900 (C:\Users\aab12\OneDrive\Рабочий стол\ИТМО\javaLabs\ArtemWhite_template\build\classes\java\main started by aab12 in C:\Users\aab12\OneDrive\Рабочий стол\ИТМО\javaLabs\ArtemWhite_template)
+2026-04-01 14:28:46 [main] DEBUG org.example.AutoDealerApplication - Running with Spring Boot v2.7.18, Spring v5.3.31
+2026-04-01 14:28:46 [main] INFO  org.example.AutoDealerApplication - The following 1 profile is active: "dev"
+2026-04-01 14:28:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-01 14:28:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 3 ms. Found 0 JPA repository interfaces.
+2026-04-01 14:28:47 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-04-01 14:28:47 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-01 14:28:47 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-04-01 14:28:47 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2026-04-01 14:28:47 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1278 ms
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - Driver class org.postgresql.Driver found in Thread context class loader jdk.internal.loader.ClassLoaders$AppClassLoader@33909752
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - CarDealershipHikariPool - configuration:
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - allowPoolSuspension................................false
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - autoCommit................................true
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - catalog................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionInitSql................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTestQuery................................"SELECT 1"
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTimeout................................30000
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSource................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceClassName................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceJNDI................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceProperties................................{password=<masked>}
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - driverClassName................................"org.postgresql.Driver"
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - exceptionOverrideClassName................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckProperties................................{}
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckRegistry................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - idleTimeout................................600000
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailTimeout................................1
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - isolateInternalQueries................................false
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbcUrl................................jdbc:postgresql://localhost:5432/car_dealership
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - keepaliveTime................................0
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - leakDetectionThreshold................................0
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - maxLifetime................................1800000
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - maximumPoolSize................................10
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricRegistry................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricsTrackerFactory................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - minimumIdle................................5
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - password................................<masked>
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - poolName................................"CarDealershipHikariPool"
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - readOnly................................false
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - registerMbeans................................false
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutor................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - schema................................none
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - threadFactory................................internal
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - transactionIsolation................................default
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - username................................"postgres"
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.HikariConfig - validationTimeout................................5000
+2026-04-01 14:28:47 [main] INFO  com.zaxxer.hikari.HikariDataSource - CarDealershipHikariPool - Starting...
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.pool.PoolBase - CarDealershipHikariPool - Failed to create/setup connection: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+2026-04-01 14:28:47 [main] DEBUG com.zaxxer.hikari.pool.HikariPool - CarDealershipHikariPool - Cannot acquire connection from data source
+org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:693)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:203)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:54)
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:263)
+	at org.postgresql.Driver.makeConnection(Driver.java:444)
+	at org.postgresql.Driver.connect(Driver.java:297)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
+	at liquibase.integration.spring.SpringLiquibase.lambda$afterPropertiesSet$0(SpringLiquibase.java:290)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.Scope.child(Scope.java:250)
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:286)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:919)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at org.example.AutoDealerApplication.main(AutoDealerApplication.java:25)
+2026-04-01 14:28:48 [main] ERROR com.zaxxer.hikari.pool.HikariPool - CarDealershipHikariPool - Exception during pool initialization.
+org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:693)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:203)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:54)
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:263)
+	at org.postgresql.Driver.makeConnection(Driver.java:444)
+	at org.postgresql.Driver.connect(Driver.java:297)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
+	at liquibase.integration.spring.SpringLiquibase.lambda$afterPropertiesSet$0(SpringLiquibase.java:290)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.Scope.child(Scope.java:250)
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:286)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:919)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at org.example.AutoDealerApplication.main(AutoDealerApplication.java:25)
+2026-04-01 14:28:48 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'liquibase' defined in class path resource [org/springframework/boot/autoconfigure/liquibase/LiquibaseAutoConfiguration$LiquibaseConfiguration.class]: Invocation of init method failed; nested exception is liquibase.exception.UnexpectedLiquibaseException: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+2026-04-01 14:28:48 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-04-01 14:28:48 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2026-04-01 14:28:48 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'liquibase' defined in class path resource [org/springframework/boot/autoconfigure/liquibase/LiquibaseAutoConfiguration$LiquibaseConfiguration.class]: Invocation of init method failed; nested exception is liquibase.exception.UnexpectedLiquibaseException: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1804)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:919)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at org.example.AutoDealerApplication.main(AutoDealerApplication.java:25)
+Caused by: liquibase.exception.UnexpectedLiquibaseException: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:303)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800)
+	... 18 common frames omitted
+Caused by: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at liquibase.integration.spring.SpringLiquibase.lambda$afterPropertiesSet$0(SpringLiquibase.java:295)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.Scope.child(Scope.java:250)
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:286)
+	... 20 common frames omitted
+Caused by: org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:693)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:203)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:54)
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:263)
+	at org.postgresql.Driver.makeConnection(Driver.java:444)
+	at org.postgresql.Driver.connect(Driver.java:297)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
+	at liquibase.integration.spring.SpringLiquibase.lambda$afterPropertiesSet$0(SpringLiquibase.java:290)
+	... 26 common frames omitted
+2026-04-01 14:33:11 [main] INFO  org.example.AutoDealerApplication - Starting AutoDealerApplication using Java 21.0.1 on Say_my_name with PID 20368 (C:\Users\aab12\OneDrive\Рабочий стол\ИТМО\javaLabs\ArtemWhite_template\build\classes\java\main started by aab12 in C:\Users\aab12\OneDrive\Рабочий стол\ИТМО\javaLabs\ArtemWhite_template)
+2026-04-01 14:33:11 [main] DEBUG org.example.AutoDealerApplication - Running with Spring Boot v2.7.18, Spring v5.3.31
+2026-04-01 14:33:11 [main] INFO  org.example.AutoDealerApplication - The following 1 profile is active: "dev"
+2026-04-01 14:33:12 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-01 14:33:12 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 5 ms. Found 0 JPA repository interfaces.
+2026-04-01 14:33:13 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+2026-04-01 14:33:13 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-04-01 14:33:13 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.83]
+2026-04-01 14:33:13 [main] INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring embedded WebApplicationContext
+2026-04-01 14:33:13 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1969 ms
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - Driver class org.postgresql.Driver found in Thread context class loader jdk.internal.loader.ClassLoaders$AppClassLoader@33909752
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - CarDealershipHikariPool - configuration:
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - allowPoolSuspension................................false
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - autoCommit................................true
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - catalog................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionInitSql................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTestQuery................................"SELECT 1"
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - connectionTimeout................................30000
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSource................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceClassName................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceJNDI................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - dataSourceProperties................................{password=<masked>}
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - driverClassName................................"org.postgresql.Driver"
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - exceptionOverrideClassName................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckProperties................................{}
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - healthCheckRegistry................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - idleTimeout................................600000
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - initializationFailTimeout................................1
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - isolateInternalQueries................................false
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - jdbcUrl................................jdbc:postgresql://localhost:5432/car_dealership
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - keepaliveTime................................0
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - leakDetectionThreshold................................0
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - maxLifetime................................1800000
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - maximumPoolSize................................10
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricRegistry................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - metricsTrackerFactory................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - minimumIdle................................5
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - password................................<masked>
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - poolName................................"CarDealershipHikariPool"
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - readOnly................................false
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - registerMbeans................................false
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - scheduledExecutor................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - schema................................none
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - threadFactory................................internal
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - transactionIsolation................................default
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - username................................"postgres"
+2026-04-01 14:33:13 [main] DEBUG com.zaxxer.hikari.HikariConfig - validationTimeout................................5000
+2026-04-01 14:33:13 [main] INFO  com.zaxxer.hikari.HikariDataSource - CarDealershipHikariPool - Starting...
+2026-04-01 14:33:14 [main] DEBUG com.zaxxer.hikari.pool.PoolBase - CarDealershipHikariPool - Failed to create/setup connection: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+2026-04-01 14:33:14 [main] DEBUG com.zaxxer.hikari.pool.HikariPool - CarDealershipHikariPool - Cannot acquire connection from data source
+org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:693)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:203)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:54)
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:263)
+	at org.postgresql.Driver.makeConnection(Driver.java:444)
+	at org.postgresql.Driver.connect(Driver.java:297)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
+	at liquibase.integration.spring.SpringLiquibase.lambda$afterPropertiesSet$0(SpringLiquibase.java:290)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.Scope.child(Scope.java:250)
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:286)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:919)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at org.example.AutoDealerApplication.main(AutoDealerApplication.java:25)
+2026-04-01 14:33:15 [main] ERROR com.zaxxer.hikari.pool.HikariPool - CarDealershipHikariPool - Exception during pool initialization.
+org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:693)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:203)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:54)
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:263)
+	at org.postgresql.Driver.makeConnection(Driver.java:444)
+	at org.postgresql.Driver.connect(Driver.java:297)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
+	at liquibase.integration.spring.SpringLiquibase.lambda$afterPropertiesSet$0(SpringLiquibase.java:290)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.Scope.child(Scope.java:250)
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:286)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:919)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at org.example.AutoDealerApplication.main(AutoDealerApplication.java:25)
+2026-04-01 14:33:15 [main] WARN  o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'liquibase' defined in class path resource [org/springframework/boot/autoconfigure/liquibase/LiquibaseAutoConfiguration$LiquibaseConfiguration.class]: Invocation of init method failed; nested exception is liquibase.exception.UnexpectedLiquibaseException: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+2026-04-01 14:33:15 [main] INFO  o.a.catalina.core.StandardService - Stopping service [Tomcat]
+2026-04-01 14:33:15 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+2026-04-01 14:33:15 [main] ERROR o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'liquibase' defined in class path resource [org/springframework/boot/autoconfigure/liquibase/LiquibaseAutoConfiguration$LiquibaseConfiguration.class]: Invocation of init method failed; nested exception is liquibase.exception.UnexpectedLiquibaseException: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1804)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:620)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:322)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.context.support.AbstractApplicationContext.getBean(AbstractApplicationContext.java:1168)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:919)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at org.example.AutoDealerApplication.main(AutoDealerApplication.java:25)
+Caused by: liquibase.exception.UnexpectedLiquibaseException: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:303)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1863)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1800)
+	... 18 common frames omitted
+Caused by: liquibase.exception.DatabaseException: org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at liquibase.integration.spring.SpringLiquibase.lambda$afterPropertiesSet$0(SpringLiquibase.java:295)
+	at liquibase.Scope.lambda$child$0(Scope.java:184)
+	at liquibase.Scope.child(Scope.java:193)
+	at liquibase.Scope.child(Scope.java:183)
+	at liquibase.Scope.child(Scope.java:162)
+	at liquibase.Scope.child(Scope.java:250)
+	at liquibase.integration.spring.SpringLiquibase.afterPropertiesSet(SpringLiquibase.java:286)
+	... 20 common frames omitted
+Caused by: org.postgresql.util.PSQLException: �����: ������������ "postgres" �� ������ �������� ����������� (�� ������)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.doAuthentication(ConnectionFactoryImpl.java:693)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.tryConnect(ConnectionFactoryImpl.java:203)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:258)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:54)
+	at org.postgresql.jdbc.PgConnection.<init>(PgConnection.java:263)
+	at org.postgresql.Driver.makeConnection(Driver.java:444)
+	at org.postgresql.Driver.connect(Driver.java:297)
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138)
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:364)
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:206)
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:476)
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561)
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:115)
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112)
+	at liquibase.integration.spring.SpringLiquibase.lambda$afterPropertiesSet$0(SpringLiquibase.java:290)
+	... 26 common frames omitted

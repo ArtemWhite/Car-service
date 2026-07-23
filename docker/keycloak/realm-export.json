@@ -1,0 +1,113 @@
+{
+  "realm": "car-dealership",
+  "enabled": true,
+  "displayName": "Car Dealership",
+  "displayNameHtml": "<b>Car Dealership</b> Authentication",
+  "accessTokenLifespan": 300,
+  "ssoSessionMaxLifespan": 36000,
+  "sslRequired": "none",
+  "users": [
+    {
+      "username": "client1",
+      "email": "client@dealership.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["CLIENT"]
+    },
+    {
+      "username": "manager1",
+      "email": "manager@dealership.com",
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["MANAGER"]
+    },
+    {
+      "username": "warehouse1",
+      "email": "warehouse@dealership.com",
+      "firstName": "Bob",
+      "lastName": "Johnson",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["WAREHOUSE_ADMIN"]
+    },
+    {
+      "username": "admin1",
+      "email": "admin@dealership.com",
+      "firstName": "Super",
+      "lastName": "Admin",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["ADMIN"]
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "CLIENT",
+        "description": "Клиент автосалона"
+      },
+      {
+        "name": "MANAGER",
+        "description": "Менеджер автосалона"
+      },
+      {
+        "name": "WAREHOUSE_ADMIN",
+        "description": "Администратор склада"
+      },
+      {
+        "name": "ADMIN",
+        "description": "Системный администратор"
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "car-dealership-api",
+      "name": "Car Dealership API",
+      "enabled": true,
+      "publicClient": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": ["http://localhost:8081/*", "http://localhost:8080/*"],
+      "webOrigins": ["http://localhost:8081", "http://localhost:8080"]
+    }
+  ],
+  "attributes": {
+    "frontendUrl": "http://localhost:8080"
+  }
+}

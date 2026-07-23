@@ -1,0 +1,153 @@
+version: '3.8'
+
+services:
+
+  order-db:
+    image: postgres:15
+    container_name: order_db
+    environment:
+      POSTGRES_DB: order_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - order_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  storage-db:
+    image: postgres:15
+    container_name: storage_db
+    environment:
+      POSTGRES_DB: storage_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - storage_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ===== KAFKA =====
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    restart: unless-stopped
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    restart: unless-stopped
+
+  # ===== KEYCLOAK =====
+
+  keycloak-db:
+    image: postgres:15
+    container_name: keycloak_db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak_password
+    ports:
+      - "5435:5432"
+    volumes:
+      - keycloak_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.1
+    container_name: keycloak
+    command: start-dev --import-realm
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak_password
+      KC_HOSTNAME: localhost
+      KC_HOSTNAME_STRICT: false
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/import:/opt/keycloak/data/import
+    depends_on:
+      - keycloak-db
+    restart: unless-stopped
+
+  # ===== PGADMIN (ОПЦИОНАЛЬНО) =====
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@dealership.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - order-db
+      - storage-db
+    restart: unless-stopped
+
+volumes:
+  order_db_data:
+  storage_db_data:
+  keycloak_db_data:
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    depends_on:
+      - order-db
+      - kafka
+      - keycloak
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://order-db:5432/order_db
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      GRPC_CLIENT_STORAGE-SERVICE_ADDRESS: storage-service:9090
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+
+  storage-service:
+    build: ./storage-service
+    container_name: storage-service
+    depends_on:
+      - storage-db
+      - kafka
+      - keycloak
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://storage-db:5432/storage_db
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+    ports:
+      - "8082:8082"
+      - "9090:9090"
+    restart: unless-stopped

@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- user_statuses -->
+    <changeSet id="1" author="developer">
+        <createTable tableName="user_statuses">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="can_authenticate" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="can_be_restored" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- user_types -->
+    <changeSet id="2" author="developer">
+        <createTable tableName="user_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- manager_positions -->
+    <changeSet id="3" author="developer">
+        <createTable tableName="manager_positions">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_concurrent_orders" type="INT" defaultValueNumeric="10"/>
+            <column name="max_concurrent_test_drives" type="INT" defaultValueNumeric="5"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- admin_levels -->
+    <changeSet id="4" author="developer">
+        <createTable tableName="admin_levels">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- system_permissions -->
+    <changeSet id="5" author="developer">
+        <createTable tableName="system_permissions">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)"/>
+            <column name="category" type="VARCHAR(50)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- warehouse_positions -->
+    <changeSet id="6" author="developer">
+        <createTable tableName="warehouse_positions">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- operation_types -->
+    <changeSet id="7" author="developer">
+        <createTable tableName="operation_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- item_types -->
+    <changeSet id="8" author="developer">
+        <createTable tableName="item_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- car_bodies -->
+    <changeSet id="9" author="developer">
+        <createTable tableName="car_bodies">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- car_brands -->
+    <changeSet id="10" author="developer">
+        <createTable tableName="car_brands">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="country_made" type="VARCHAR(50)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- car_colors -->
+    <changeSet id="11" author="developer">
+        <createTable tableName="car_colors">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_default" type="BOOLEAN" defaultValueBoolean="false"/>
+            <column name="color_price" type="INT" defaultValueNumeric="0"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- drive_types -->
+    <changeSet id="12" author="developer">
+        <createTable tableName="drive_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="code_name" type="VARCHAR(20)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- car_statuses -->
+    <changeSet id="13" author="developer">
+        <createTable tableName="car_statuses">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- engine_fuel_types -->
+    <changeSet id="14" author="developer">
+        <createTable tableName="engine_fuel_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- transmission_types -->
+    <changeSet id="15" author="developer">
+        <createTable tableName="transmission_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- component_types -->
+    <changeSet id="16" author="developer">
+        <createTable tableName="component_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- order_statuses -->
+    <changeSet id="17" author="developer">
+        <createTable tableName="order_statuses">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- order_types -->
+    <changeSet id="18" author="developer">
+        <createTable tableName="order_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- payment_methods -->
+    <changeSet id="19" author="developer">
+        <createTable tableName="payment_methods">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- payment_statuses -->
+    <changeSet id="20" author="developer">
+        <createTable tableName="payment_statuses">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- spare_types -->
+    <changeSet id="21" author="developer">
+        <createTable tableName="spare_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- test_drive_statuses -->
+    <changeSet id="22" author="developer">
+        <createTable tableName="test_drive_statuses">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

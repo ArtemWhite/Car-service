@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- users -->
+    <changeSet id="100" author="developer">
+        <createTable tableName="users">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="middle_name" type="VARCHAR(50)"/>
+            <column name="email" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="phone" type="VARCHAR(20)"/>
+            <column name="password_hash" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_type_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_active_at" type="TIMESTAMP"/>
+            <column name="last_password_change_at" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_user_status"
+                baseTableName="users" baseColumnNames="status_id"
+                referencedTableName="user_statuses" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_user_type"
+                baseTableName="users" baseColumnNames="user_type_id"
+                referencedTableName="user_types" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- clients -->
+    <changeSet id="101" author="developer">
+        <createTable tableName="clients">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="preferred_contact_method" type="VARCHAR(20)"/>
+            <column name="newsletter_subscribed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_client_user"
+                baseTableName="clients" baseColumnNames="user_id"
+                referencedTableName="users" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- client_orders -->
+    <changeSet id="102" author="developer">
+        <createTable tableName="client_orders">
+            <column name="client_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_client_orders_client"
+                baseTableName="client_orders" baseColumnNames="client_id"
+                referencedTableName="clients" referencedColumnNames="user_id"/>
+    </changeSet>
+
+    <!-- client_test_drives -->
+    <changeSet id="103" author="developer">
+        <createTable tableName="client_test_drives">
+            <column name="client_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="test_drive_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_client_test_drives_client"
+                baseTableName="client_test_drives" baseColumnNames="client_id"
+                referencedTableName="clients" referencedColumnNames="user_id"/>
+    </changeSet>
+
+    <!-- managers -->
+    <changeSet id="104" author="developer">
+        <createTable tableName="managers">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="position_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_concurrent_orders" type="INT" defaultValueNumeric="10"/>
+            <column name="max_concurrent_test_drives" type="INT" defaultValueNumeric="5"/>
+            <column name="available" type="BOOLEAN" defaultValueBoolean="true"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_manager_user"
+                baseTableName="managers" baseColumnNames="user_id"
+                referencedTableName="users" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_manager_position"
+                baseTableName="managers" baseColumnNames="position_id"
+                referencedTableName="manager_positions" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- manager_orders -->
+    <changeSet id="105" author="developer">
+        <createTable tableName="manager_orders">
+            <column name="manager_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_manager_orders_manager"
+                baseTableName="manager_orders" baseColumnNames="manager_id"
+                referencedTableName="managers" referencedColumnNames="user_id"/>
+    </changeSet>
+
+    <!-- manager_test_drives -->
+    <changeSet id="106" author="developer">
+        <createTable tableName="manager_test_drives">
+            <column name="manager_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="test_drive_id" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_manager_test_drives_manager"
+                baseTableName="manager_test_drives" baseColumnNames="manager_id"
+                referencedTableName="managers" referencedColumnNames="user_id"/>
+    </changeSet>
+
+    <!-- system_admins -->
+    <changeSet id="107" author="developer">
+        <createTable tableName="system_admins">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="admin_level_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_login_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_system_admin_user"
+                baseTableName="system_admins" baseColumnNames="user_id"
+                referencedTableName="users" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_system_admin_level"
+                baseTableName="system_admins" baseColumnNames="admin_level_id"
+                referencedTableName="admin_levels" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- admin_permissions -->
+    <changeSet id="108" author="developer">
+        <createTable tableName="admin_permissions">
+            <column name="admin_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_admin_perm_admin"
+                baseTableName="admin_permissions" baseColumnNames="admin_id"
+                referencedTableName="system_admins" referencedColumnNames="user_id"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_admin_perm_permission"
+                baseTableName="admin_permissions" baseColumnNames="permission_id"
+                referencedTableName="system_permissions" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- audit_log_entries -->
+    <changeSet id="109" author="developer">
+        <createTable tableName="audit_log_entries">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="admin_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="details" type="VARCHAR(500)"/>
+            <column name="log_timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_audit_admin"
+                baseTableName="audit_log_entries" baseColumnNames="admin_id"
+                referencedTableName="system_admins" referencedColumnNames="user_id"/>
+    </changeSet>
+
+    <!-- warehouse_admins (частично) -->
+    <changeSet id="110" author="developer">
+        <createTable tableName="warehouse_admins">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="warehouse_position_id" type="UUID"/>
+            <column name="on_duty" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_warehouse_admin_user"
+                baseTableName="warehouse_admins" baseColumnNames="user_id"
+                referencedTableName="users" referencedColumnNames="id"/>
+    </changeSet>
+
+</databaseChangeLog>
