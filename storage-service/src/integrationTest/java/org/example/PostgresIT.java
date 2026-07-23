@@ -1,7 +1,6 @@
 package org.example;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -13,7 +12,6 @@ import java.sql.ResultSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Testcontainers
-@SpringBootTest(classes = StorageServiceApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PostgresIT {
 
     @Container

@@ -5,6 +5,60 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
+    <!-- warehouse_positions -->
+    <changeSet id="storage-ref-1" author="ArtemWhite">
+        <createTable tableName="warehouse_positions">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- operation_types -->
+    <changeSet id="storage-ref-2" author="ArtemWhite">
+        <createTable tableName="operation_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- item_types -->
+    <changeSet id="storage-ref-3" author="ArtemWhite">
+        <createTable tableName="item_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
     <!-- car_bodies -->
     <changeSet id="storage-ref-4" author="ArtemWhite">
         <createTable tableName="car_bodies">
@@ -169,6 +223,14 @@
             <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
             <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
         </createTable>
+    </changeSet>
+
+    <!-- FK from warehouse_admins to warehouse_positions (table created in v1-storage-0.0, FK added here after warehouse_positions exists) -->
+    <changeSet id="storage-ref-13" author="ArtemWhite">
+        <addForeignKeyConstraint
+                constraintName="fk_warehouse_position"
+                baseTableName="warehouse_admins" baseColumnNames="warehouse_position_id"
+                referencedTableName="warehouse_positions" referencedColumnNames="id"/>
     </changeSet>
 
 </databaseChangeLog>

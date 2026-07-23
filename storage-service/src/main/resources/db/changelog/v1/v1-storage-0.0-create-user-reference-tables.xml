@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <!-- user_statuses -->
+    <changeSet id="storage-user-ref-1" author="ArtemWhite">
+        <createTable tableName="user_statuses">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="can_authenticate" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="can_be_restored" type="BOOLEAN" defaultValueBoolean="true"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- user_types -->
+    <changeSet id="storage-user-ref-2" author="ArtemWhite">
+        <createTable tableName="user_types">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- manager_positions -->
+    <changeSet id="storage-user-ref-3" author="ArtemWhite">
+        <createTable tableName="manager_positions">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_concurrent_orders" type="INT" defaultValueNumeric="10"/>
+            <column name="max_concurrent_test_drives" type="INT" defaultValueNumeric="5"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- admin_levels -->
+    <changeSet id="storage-user-ref-4" author="ArtemWhite">
+        <createTable tableName="admin_levels">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- system_permissions -->
+    <changeSet id="storage-user-ref-5" author="ArtemWhite">
+        <createTable tableName="system_permissions">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="display_name" type="VARCHAR(100)"/>
+            <column name="category" type="VARCHAR(50)"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+    </changeSet>
+
+    <!-- users -->
+    <changeSet id="storage-user-1" author="ArtemWhite">
+        <createTable tableName="users">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="first_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_name" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="middle_name" type="VARCHAR(50)"/>
+            <column name="email" type="VARCHAR(100)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="phone" type="VARCHAR(20)"/>
+            <column name="password_hash" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_type_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_active_at" type="TIMESTAMP"/>
+            <column name="last_password_change_at" type="TIMESTAMP"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_user_status"
+                baseTableName="users" baseColumnNames="status_id"
+                referencedTableName="user_statuses" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_user_type"
+                baseTableName="users" baseColumnNames="user_type_id"
+                referencedTableName="user_types" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- clients -->
+    <changeSet id="storage-user-2" author="ArtemWhite">
+        <createTable tableName="clients">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="preferred_contact_method" type="VARCHAR(20)"/>
+            <column name="newsletter_subscribed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_client_user"
+                baseTableName="clients" baseColumnNames="user_id"
+                referencedTableName="users" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- managers -->
+    <changeSet id="storage-user-3" author="ArtemWhite">
+        <createTable tableName="managers">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="position_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="max_concurrent_orders" type="INT" defaultValueNumeric="10"/>
+            <column name="max_concurrent_test_drives" type="INT" defaultValueNumeric="5"/>
+            <column name="available" type="BOOLEAN" defaultValueBoolean="true"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_manager_user"
+                baseTableName="managers" baseColumnNames="user_id"
+                referencedTableName="users" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_manager_position"
+                baseTableName="managers" baseColumnNames="position_id"
+                referencedTableName="manager_positions" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- system_admins -->
+    <changeSet id="storage-user-4" author="ArtemWhite">
+        <createTable tableName="system_admins">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="admin_level_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_login_at" type="TIMESTAMP"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_system_admin_user"
+                baseTableName="system_admins" baseColumnNames="user_id"
+                referencedTableName="users" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_system_admin_level"
+                baseTableName="system_admins" baseColumnNames="admin_level_id"
+                referencedTableName="admin_levels" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- admin_permissions -->
+    <changeSet id="storage-user-5" author="ArtemWhite">
+        <createTable tableName="admin_permissions">
+            <column name="admin_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="permission_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_admin_perm_admin"
+                baseTableName="admin_permissions" baseColumnNames="admin_id"
+                referencedTableName="system_admins" referencedColumnNames="user_id"/>
+
+        <addForeignKeyConstraint
+                constraintName="fk_admin_perm_permission"
+                baseTableName="admin_permissions" baseColumnNames="permission_id"
+                referencedTableName="system_permissions" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- audit_log_entries -->
+    <changeSet id="storage-user-6" author="ArtemWhite">
+        <createTable tableName="audit_log_entries">
+            <column name="id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="admin_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="details" type="VARCHAR(500)"/>
+            <column name="log_timestamp" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="removed" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_audit_admin"
+                baseTableName="audit_log_entries" baseColumnNames="admin_id"
+                referencedTableName="system_admins" referencedColumnNames="user_id"/>
+    </changeSet>
+
+    <!-- warehouse_admins (FK to warehouse_positions added in v1-storage-1.0) -->
+    <changeSet id="storage-user-7" author="ArtemWhite">
+        <createTable tableName="warehouse_admins">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="warehouse_position_id" type="UUID"/>
+            <column name="on_duty" type="BOOLEAN" defaultValueBoolean="false"/>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_warehouse_admin_user"
+                baseTableName="warehouse_admins" baseColumnNames="user_id"
+                referencedTableName="users" referencedColumnNames="id"/>
+    </changeSet>
+
+    <!-- warehouse_admin_sections -->
+    <changeSet id="storage-user-8" author="ArtemWhite">
+        <createTable tableName="warehouse_admin_sections">
+            <column name="admin_id" type="UUID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="section_id" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint
+                constraintName="fk_warehouse_section_admin"
+                baseTableName="warehouse_admin_sections" baseColumnNames="admin_id"
+                referencedTableName="warehouse_admins" referencedColumnNames="user_id"/>
+    </changeSet>
+
+</databaseChangeLog>

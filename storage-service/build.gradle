@@ -134,6 +134,8 @@ test {
 }
 
 tasks.withType(Test).configureEach {
+    jvmArgs '-XX:+EnableDynamicAgentLoading'
+    jvmArgs '-Dnet.bytebuddy.experimental=true'
     systemProperty 'spring.profiles.active', 'test'
     environment 'TESTCONTAINERS_RYUK_DISABLED', 'true'
 

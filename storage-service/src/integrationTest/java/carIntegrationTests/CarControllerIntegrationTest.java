@@ -174,7 +174,7 @@ class CarControllerIntegrationTest extends BaseIntegrationTest {
         }
     }
 
-    private void createCarWithSpecs(String brand, String model, String bodyType,
+    private String createCarWithSpecs(String brand, String model, String bodyType,
                                     String color, double price) throws Exception {
         Map<String, Object> request = new HashMap<>();
         request.put("brand", brand);
@@ -189,11 +189,14 @@ class CarControllerIntegrationTest extends BaseIntegrationTest {
         request.put("transmissionType", "AUTOMATIC");
         request.put("price", price);
 
-        mockMvc.perform(post("/api/admin/cars")
+        String response = mockMvc.perform(post("/api/admin/cars")
                         .header("X-User-Id", adminId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn().getResponse().getContentAsString();
+
+        return objectMapper.readTree(response).get("id").asText();
     }
 
     @Test
@@ -294,7 +297,7 @@ class CarControllerIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(post("/api/admin/cars")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -367,7 +370,7 @@ class CarControllerIntegrationTest extends BaseIntegrationTest {
 
         mockMvc.perform(delete("/api/admin/cars/{id}", carId)
                         .param("reason", "Test deletion"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -391,13 +394,13 @@ class CarControllerIntegrationTest extends BaseIntegrationTest {
     @Transactional
     @Rollback
     void shouldGetCarsWithFilters() throws Exception {
-        createCarWithSpecs("BMW", "X5", "SEDAN", "BLACK", 2500000.0);
-        createCarWithSpecs("BMW", "X3", "COUPE", "WHITE", 3000000.0);
-        createCarWithSpecs("TOYOTA", "Camry", "SEDAN", "BLACK", 2000000.0);
+        String carId1 = createCarWithSpecs("BMW", "X5", "SEDAN", "BLACK", 2500000.0);
+        String carId2 = createCarWithSpecs("BMW", "X3", "COUPE", "WHITE", 3000000.0);
+        String carId3 = createCarWithSpecs("TOYOTA", "Camry", "SEDAN", "BLACK", 2000000.0);
 
-        updateCarStatusByName("X5", "AVAILABLE");
-        updateCarStatusByName("X3", "SOLD");
-        updateCarStatusByName("Camry", "AVAILABLE");
+        updateCarStatusById(carId1, "AVAILABLE");
+        updateCarStatusById(carId2, "SOLD");
+        updateCarStatusById(carId3, "AVAILABLE");
 
         mockMvc.perform(get("/api/cars")
                         .param("brand", "BMW")
@@ -408,11 +411,7 @@ class CarControllerIntegrationTest extends BaseIntegrationTest {
                 .andExpect(jsonPath("$.cars[0].model").value("X5"));
     }
 
-    private void updateCarStatusByName(String modelName, String status) throws Exception {
-        String carId = jdbcTemplate.queryForObject(
-                "SELECT id FROM cars WHERE model_id IN (SELECT id FROM car_models WHERE name = ?)",
-                String.class, modelName);
-
+    private void updateCarStatusById(String carId, String status) throws Exception {
         String updateRequest = String.format("{\"status\": \"%s\"}", status);
         mockMvc.perform(put("/api/admin/cars/{id}", carId)
                         .header("X-User-Id", adminId)

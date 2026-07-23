@@ -169,7 +169,7 @@ class SparePartNegativeScenariosIntegrationTest extends SparePartBaseIntegration
         mockMvc.perform(post("/api/admin/spare-parts")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test

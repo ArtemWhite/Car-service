@@ -3,6 +3,7 @@ package carIntegrationTests;
 import org.example.StorageServiceApplication;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -15,6 +16,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = StorageServiceApplication.class
 )
+@Import(TestSecurityConfiguration.class)
 public abstract class BaseIntegrationTest {
 
     private static final PostgreSQLContainer<?> postgres;

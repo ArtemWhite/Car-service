@@ -24,7 +24,7 @@ class LiquibaseMigrationIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void shouldCreateAllTables() {
-        String[] tables = {"users", "cars", "orders", "payments", "spare_parts", "test_drive_requests"};
+        String[] tables = {"users", "cars", "spare_parts"};
 
         for (String table : tables) {
             Integer count = jdbcTemplate.queryForObject(

@@ -5,6 +5,8 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
 
+    <include file="v1/v1-storage-0.0-create-user-reference-tables.xml" relativeToChangelogFile="true"/>
+
     <include file="v1/v1-storage-1.0-create-car-reference-tables.xml" relativeToChangelogFile="true"/>
 
     <include file="v1/v1-storage-2.0-create-car-tables.xml" relativeToChangelogFile="true"/>

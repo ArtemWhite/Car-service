@@ -102,6 +102,117 @@
         </insert>
     </changeSet>
 
+    <!-- ===== USER STATUSES ===== -->
+    <changeSet id="2015" author="ArtemWhite">
+        <insert tableName="user_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ACTIVE"/>
+            <column name="display_name" value="Активен"/>
+            <column name="can_authenticate" valueBoolean="true"/>
+            <column name="can_be_restored" valueBoolean="true"/>
+        </insert>
+        <insert tableName="user_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="INACTIVE"/>
+            <column name="display_name" value="Неактивен"/>
+            <column name="can_authenticate" valueBoolean="false"/>
+            <column name="can_be_restored" valueBoolean="true"/>
+        </insert>
+        <insert tableName="user_statuses">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="BLOCKED"/>
+            <column name="display_name" value="Заблокирован"/>
+            <column name="can_authenticate" valueBoolean="false"/>
+            <column name="can_be_restored" valueBoolean="false"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== USER TYPES ===== -->
+    <changeSet id="2016" author="ArtemWhite">
+        <insert tableName="user_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="CLIENT"/>
+            <column name="display_name" value="Клиент"/>
+        </insert>
+        <insert tableName="user_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MANAGER"/>
+            <column name="display_name" value="Менеджер"/>
+        </insert>
+        <insert tableName="user_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SYSTEM_ADMIN"/>
+            <column name="display_name" value="Системный администратор"/>
+        </insert>
+        <insert tableName="user_types">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="WAREHOUSE_ADMIN"/>
+            <column name="display_name" value="Администратор склада"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== ADMIN LEVELS ===== -->
+    <changeSet id="2017" author="ArtemWhite">
+        <insert tableName="admin_levels">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SUPER_ADMIN"/>
+            <column name="display_name" value="Супер администратор"/>
+            <column name="level" valueNumeric="100"/>
+        </insert>
+        <insert tableName="admin_levels">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="ADMIN"/>
+            <column name="display_name" value="Администратор"/>
+            <column name="level" valueNumeric="50"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== MANAGER POSITIONS ===== -->
+    <changeSet id="2018" author="ArtemWhite">
+        <insert tableName="manager_positions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SALES_MANAGER"/>
+            <column name="display_name" value="Менеджер по продажам"/>
+            <column name="max_concurrent_orders" valueNumeric="10"/>
+            <column name="max_concurrent_test_drives" valueNumeric="5"/>
+        </insert>
+        <insert tableName="manager_positions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="SENIOR_MANAGER"/>
+            <column name="display_name" value="Старший менеджер"/>
+            <column name="max_concurrent_orders" valueNumeric="20"/>
+            <column name="max_concurrent_test_drives" valueNumeric="10"/>
+        </insert>
+    </changeSet>
+
+    <!-- ===== SYSTEM PERMISSIONS ===== -->
+    <changeSet id="2019" author="ArtemWhite">
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MANAGE_USERS"/>
+            <column name="display_name" value="Управление пользователями"/>
+            <column name="category" value="USERS"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MANAGE_CARS"/>
+            <column name="display_name" value="Управление автомобилями"/>
+            <column name="category" value="CARS"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MANAGE_ORDERS"/>
+            <column name="display_name" value="Управление заказами"/>
+            <column name="category" value="ORDERS"/>
+        </insert>
+        <insert tableName="system_permissions">
+            <column name="id" valueComputed="gen_random_uuid()"/>
+            <column name="name" value="MANAGE_SPARE_PARTS"/>
+            <column name="display_name" value="Управление запчастями"/>
+            <column name="category" value="SPARE_PARTS"/>
+        </insert>
+    </changeSet>
+
     <!-- ===== CAR BODIES ===== -->
     <changeSet id="2003" author="developer">
         <insert tableName="car_bodies">

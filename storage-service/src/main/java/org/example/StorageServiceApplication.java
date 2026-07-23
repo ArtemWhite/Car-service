@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"org.example", "presentation", "infrastructure", "domain", "application"})
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = "com.dealership.storage.infrastructure.repository")
-@EntityScan(basePackages = "com.dealership.storage.infrastructure.entity")
+@EnableJpaRepositories(basePackages = "infrastructure.jpaRepository")
+@EntityScan(basePackages = "infrastructure.entities")
 @EnableKafka
 @EnableScheduling
 public class StorageServiceApplication {

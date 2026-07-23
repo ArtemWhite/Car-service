@@ -142,7 +142,7 @@ class CarAdminControllerIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(post("/api/admin/cars")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(request))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test

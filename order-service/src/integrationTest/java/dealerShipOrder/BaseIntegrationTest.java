@@ -1,7 +1,11 @@
 package dealerShipOrder;
 
+import domain.repository.carRepository.CarRepository;
+import domain.repository.carRepository.ConfigurationRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -14,7 +18,14 @@ import org.testcontainers.junit.jupiter.Testcontainers;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         classes = OrderServiceApplication.class
 )
+@Import(TestSecurityConfiguration.class)
 public abstract class BaseIntegrationTest {
+
+    @MockBean
+    protected CarRepository carRepository;
+
+    @MockBean
+    protected ConfigurationRepository configurationRepository;
 
     private static final PostgreSQLContainer<?> postgres;
 
@@ -38,5 +49,7 @@ public abstract class BaseIntegrationTest {
         registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
         registry.add("spring.datasource.hikari.maximumPoolSize", () -> "10");
         registry.add("spring.datasource.hikari.connectionTimeout", () -> "30000");
+        registry.add("grpc.client.storage-service.address", () -> "static://localhost:9999");
+        registry.add("spring.kafka.bootstrap-servers", () -> "localhost:9999");
     }
 }
