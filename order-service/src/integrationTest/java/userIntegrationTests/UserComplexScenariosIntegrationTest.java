@@ -24,6 +24,7 @@ class UserComplexScenariosIntegrationTest extends UserBaseIntegrationTest {
     @BeforeEach
     void setUp() throws Exception {
         cleanUpUsers();
+        createTestUsers();
 
         testClientId = UUID.randomUUID().toString();
         createUser(testClientId, "CLIENT", "complex_client@test.com", "ACTIVE");

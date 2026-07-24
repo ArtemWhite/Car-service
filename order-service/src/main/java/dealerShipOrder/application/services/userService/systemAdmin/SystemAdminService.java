@@ -7,6 +7,7 @@ import dealerShipOrder.application.dtos.response.userResponse.users.SystemAdminR
 import dealerShipOrder.domain.models.users.systemAdmin.SystemPermission;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SystemAdminService {
 
@@ -36,4 +37,13 @@ public interface SystemAdminService {
     List<OperationHistoryRequest> getAuditLog();
     List<OperationHistoryRequest> getUserAuditLog(String userId);
     void changeSystemSettings(Object settings);
+
+    List<UserBaseResponse> getAllSystemAdmins();
+    List<UserBaseResponse> getAllWarehouseAdmins();
+    Map<String, Object> getAdminPermissions(String adminId);
+    SystemAdminResponse demoteAdmin(String targetAdminId, String newLevel);
+    Map<String, Object> getSystemStats();
+    Map<String, Object> getUserRegistrationStats(int days);
+    List<UserBaseResponse> bulkUpdateUserStatus(List<String> userIds, String status);
+    SystemAdminResponse promoteManagerToAdmin(String managerId, String adminLevel);
 }

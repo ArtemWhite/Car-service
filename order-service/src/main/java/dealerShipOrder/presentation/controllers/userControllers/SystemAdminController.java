@@ -17,6 +17,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -180,5 +182,83 @@ public class SystemAdminController {
     public ResponseEntity<UserBasePresentationResponse> deactivateUser(@PathVariable String userId) {
         var response = systemAdminService.deactivateUser(userId);
         return ResponseEntity.ok(mapper.toPresentation(response));
+    }
+
+    @GetMapping("/admins")
+    @Operation(summary = "List all system admins")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<UserListPresentationResponse> listAllSystemAdmins() {
+        var response = systemAdminService.getAllSystemAdmins();
+        return ResponseEntity.ok(mapper.toUserListPresentation(response));
+    }
+
+    @GetMapping("/warehouse-admins")
+    @Operation(summary = "List all warehouse admins")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<UserListPresentationResponse> listAllWarehouseAdmins() {
+        var response = systemAdminService.getAllWarehouseAdmins();
+        return ResponseEntity.ok(mapper.toUserListPresentation(response));
+    }
+
+    @GetMapping("/admins/{adminId}/permissions")
+    @Operation(summary = "Get admin permissions")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<?> getAdminPermissions(@PathVariable String adminId) {
+        var response = systemAdminService.getAdminPermissions(adminId);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/admins/{targetAdminId}/demote")
+    @Operation(summary = "Demote admin")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<SystemAdminPresentationResponse> demoteAdmin(
+            @PathVariable String targetAdminId,
+            @RequestParam String newLevel) {
+        var response = systemAdminService.demoteAdmin(targetAdminId, newLevel);
+        return ResponseEntity.ok(mapper.toSystemAdminPresentation(response));
+    }
+
+    @GetMapping("/stats")
+    @Operation(summary = "Get system stats")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<?> getSystemStats() {
+        var response = systemAdminService.getSystemStats();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/stats/registrations")
+    @Operation(summary = "Get user registration stats")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<?> getUserRegistrationStats(@RequestParam(defaultValue = "30") int days) {
+        var response = systemAdminService.getUserRegistrationStats(days);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/users/bulk/status")
+    @Operation(summary = "Bulk update user status")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<?> bulkUpdateUserStatus(
+            @RequestParam String status,
+            @RequestBody List<String> userIds) {
+        var response = systemAdminService.bulkUpdateUserStatus(userIds, status);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/system/settings")
+    @Operation(summary = "Change system settings")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<?> changeSystemSettings(@RequestBody Map<String, Object> settings) {
+        systemAdminService.changeSystemSettings(settings);
+        return ResponseEntity.ok(Map.of("message", "Settings updated"));
+    }
+
+    @PostMapping("/managers/{managerId}/promote-to-admin")
+    @Operation(summary = "Promote manager to system admin")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<SystemAdminPresentationResponse> promoteManagerToAdmin(
+            @PathVariable String managerId,
+            @RequestParam String adminLevel) {
+        var response = systemAdminService.promoteManagerToAdmin(managerId, adminLevel);
+        return ResponseEntity.ok(mapper.toSystemAdminPresentation(response));
     }
 }

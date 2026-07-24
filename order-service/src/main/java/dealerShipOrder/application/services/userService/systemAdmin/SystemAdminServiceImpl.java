@@ -14,25 +14,34 @@ import dealerShipOrder.domain.models.users.client.Client;
 import dealerShipOrder.domain.models.users.manager.Manager;
 import dealerShipOrder.domain.models.users.manager.Position;
 import dealerShipOrder.domain.models.users.systemAdmin.AdminLevel;
+import dealerShipOrder.domain.models.users.systemAdmin.AuditLogEntry;
 import dealerShipOrder.domain.models.users.systemAdmin.SystemAdmin;
 import dealerShipOrder.domain.models.users.systemAdmin.SystemPermission;
 import dealerShipOrder.domain.models.users.warehouseAdmin.WarehouseAdmin;
 import dealerShipOrder.domain.models.users.warehouseAdmin.WarehousePosition;
+import dealerShipOrder.infrastructure.jpaRepository.userJpaRepositories.systemAdminJpaRepositories.AuditLogEntryJpaRepository;
 import dealerShipOrder.infrastructure.security.SecurityUtils;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class SystemAdminServiceImpl extends BaseUserService implements SystemAdminService {
 
+    private final AuditLogEntryJpaRepository auditLogRepository;
+
     public SystemAdminServiceImpl(
             UserRepository userRepository,
-            UserMapper userMapper) {
+            UserMapper userMapper,
+            AuditLogEntryJpaRepository auditLogRepository) {
         super(userRepository, userMapper);
+        this.auditLogRepository = auditLogRepository;
     }
 
     @Override
@@ -108,6 +117,10 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
         SystemAdmin admin = getCurrentSystemAdmin();
         admin.checkPermission(SystemPermission.DELETE_USER);
 
+        if (admin.getId().equals(userId)) {
+            throw new DomainValidationException("Cannot delete your own account");
+        }
+
         userRepository.delete(userId);
 
         admin.logAction("DELETE_USER", "Deleted user: " + userId + ". Reason: " + reason);
@@ -118,6 +131,10 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
     public UserBaseResponse blockUser(String userId, String reason) {
         SystemAdmin admin = getCurrentSystemAdmin();
         admin.checkPermission(SystemPermission.BLOCK_USER);
+
+        if (admin.getId().equals(userId)) {
+            throw new DomainValidationException("Cannot block your own account");
+        }
 
         User user = findUserById(userId);
         user.block();
@@ -150,7 +167,7 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
             case Manager manager -> userMapper.toManagerResponse(manager);
             case SystemAdmin admin -> userMapper.toSystemAdminResponse(admin);
             case WarehouseAdmin warehouseAdmin -> userMapper.toWarehouseAdminResponse(warehouseAdmin);
-            default -> null;
+            default -> userMapper.toBaseResponse(user);
         };
     }
 
@@ -161,7 +178,7 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
         admin.checkPermission(SystemPermission.VIEW_USERS);
 
         return userRepository.findAll().stream()
-                .map(userMapper::toBaseResponse)
+                .map(this::getUserResponseByType)
                 .collect(Collectors.toList());
     }
 
@@ -180,7 +197,7 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
         };
 
         return userRepository.findAllByRole(userClass).stream()
-                .map(userMapper::toBaseResponse)
+                .map(this::getUserResponseByType)
                 .collect(Collectors.toList());
     }
 
@@ -202,7 +219,7 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
 
         List<User> users = userRepository.findAll();
         List<UserBaseResponse> responses = users.stream()
-                .map(userMapper::toBaseResponse)
+                .map(this::getUserResponseByType)
                 .collect(Collectors.toList());
 
         return new UserListResponse(
@@ -338,12 +355,13 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
         SystemAdmin admin = getCurrentSystemAdmin();
         admin.checkPermission(SystemPermission.VIEW_AUDIT_LOG);
 
-        return admin.getAuditLog().stream()
-                .map(log -> OperationHistoryRequest.builder()
-                        .id(log.getAdminId())
-                        .operationType(log.getAction())
-                        .description(log.getDetails())
-                        .timestamp(log.getTimestamp())
+        return auditLogRepository.findAll().stream()
+                .filter(entity -> !entity.isRemoved())
+                .map(entity -> OperationHistoryRequest.builder()
+                        .id(entity.getId().toString())
+                        .operationType(entity.getAction())
+                        .description(entity.getDetails())
+                        .timestamp(java.time.LocalDateTime.ofInstant(entity.getTimestamp(), ZoneId.systemDefault()))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -354,13 +372,13 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
         SystemAdmin admin = getCurrentSystemAdmin();
         admin.checkPermission(SystemPermission.VIEW_AUDIT_LOG);
 
-        return admin.getAuditLog().stream()
-                .filter(log -> log.getAdminId().equals(userId))
-                .map(log -> OperationHistoryRequest.builder()
-                        .id(log.getAdminId())
-                        .operationType(log.getAction())
-                        .description(log.getDetails())
-                        .timestamp(log.getTimestamp())
+        return auditLogRepository.findByAdminId(UUID.fromString(userId)).stream()
+                .filter(entity -> !entity.isRemoved())
+                .map(entity -> OperationHistoryRequest.builder()
+                        .id(entity.getId().toString())
+                        .operationType(entity.getAction())
+                        .description(entity.getDetails())
+                        .timestamp(java.time.LocalDateTime.ofInstant(entity.getTimestamp(), ZoneId.systemDefault()))
                         .build())
                 .collect(Collectors.toList());
     }
@@ -393,5 +411,176 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
     public SystemAdminResponse getMyProfile() {
         SystemAdmin admin = getCurrentSystemAdmin();
         return userMapper.toSystemAdminResponse(admin);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserBaseResponse> getAllSystemAdmins() {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        admin.checkPermission(SystemPermission.VIEW_USERS);
+        return userRepository.findAllByRole(SystemAdmin.class).stream()
+                .map(this::getUserResponseByType)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserBaseResponse> getAllWarehouseAdmins() {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        admin.checkPermission(SystemPermission.VIEW_USERS);
+        return userRepository.findAllByRole(WarehouseAdmin.class).stream()
+                .map(this::getUserResponseByType)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getAdminPermissions(String adminId) {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        SystemAdmin target = findSystemAdminById(adminId);
+        return Map.of(
+                "adminId", target.getId(),
+                "permissions", target.getPermissions().stream()
+                        .map(Enum::name)
+                        .collect(Collectors.toList())
+        );
+    }
+
+    @Override
+    @Transactional
+    public SystemAdminResponse demoteAdmin(String targetAdminId, String newLevel) {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        admin.checkPermission(SystemPermission.MANAGE_PERMISSIONS);
+
+        SystemAdmin target = findSystemAdminById(targetAdminId);
+        AdminLevel level = AdminLevel.valueOf(newLevel);
+
+        if (level.ordinal() >= target.getLevel().ordinal()) {
+            throw new DomainValidationException("Cannot demote to same or higher level");
+        }
+
+        SystemAdmin demoted = new SystemAdmin(
+                target.getFirstName(),
+                target.getLastName(),
+                target.getMiddleName(),
+                target.getEmail(),
+                target.getPhone(),
+                "",
+                target.getId(),
+                level
+        );
+
+        userRepository.delete(targetAdminId);
+        SystemAdmin saved = (SystemAdmin) saveUser(demoted);
+
+        admin.logAction("DEMOTE_ADMIN", "Demoted " + target.getEmail() + " to " + newLevel);
+        saveUser(admin);
+
+        return userMapper.toSystemAdminResponse(saved);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getSystemStats() {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        admin.checkPermission(SystemPermission.VIEW_USERS);
+
+        List<User> allUsers = userRepository.findAll();
+        long activeUsers = allUsers.stream().filter(u -> u.getStatus() == UserStatus.ACTIVE).count();
+        long clientsCount = userRepository.countByRole(Client.class);
+        long managersCount = userRepository.countByRole(Manager.class);
+        long adminsCount = userRepository.countByRole(SystemAdmin.class);
+        long warehouseAdminsCount = userRepository.countByRole(WarehouseAdmin.class);
+
+        return Map.of(
+                "totalUsers", allUsers.size(),
+                "activeUsers", activeUsers,
+                "clientsCount", clientsCount,
+                "managersCount", managersCount,
+                "adminsCount", adminsCount,
+                "warehouseAdminsCount", warehouseAdminsCount
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getUserRegistrationStats(int days) {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        admin.checkPermission(SystemPermission.VIEW_USERS);
+
+        List<Map<String, Object>> dailyStats = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+        for (int i = 0; i < days; i++) {
+            LocalDateTime day = now.minusDays(i);
+            long count = userRepository.findAll().stream()
+                    .filter(u -> u.getRegisteredAt() != null &&
+                            u.getRegisteredAt().toLocalDate().equals(day.toLocalDate()))
+                    .count();
+            Map<String, Object> dayStat = new HashMap<>();
+            dayStat.put("date", day.toLocalDate().toString());
+            dayStat.put("count", count);
+            dailyStats.add(dayStat);
+        }
+
+        return Map.of("dailyStats", dailyStats);
+    }
+
+    @Override
+    @Transactional
+    public List<UserBaseResponse> bulkUpdateUserStatus(List<String> userIds, String status) {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        admin.checkPermission(SystemPermission.UPDATE_USER);
+
+        UserStatus newStatus = UserStatus.valueOf(status);
+        List<UserBaseResponse> results = new ArrayList<>();
+
+        for (String userId : userIds) {
+            User user = findUserById(userId);
+            switch (newStatus) {
+                case ACTIVE -> user.activate();
+                case INACTIVE -> user.deactivate();
+                case BLOCKED -> user.block();
+            }
+            User updated = saveUser(user);
+            results.add(getUserResponseByType(updated));
+        }
+
+        admin.logAction("BULK_STATUS_UPDATE", "Updated status of " + userIds.size() + " users to " + status);
+        saveUser(admin);
+
+        return results;
+    }
+
+    @Override
+    @Transactional
+    public SystemAdminResponse promoteManagerToAdmin(String managerId, String adminLevel) {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        admin.checkPermission(SystemPermission.MANAGE_PERMISSIONS);
+
+        User user = findUserById(managerId);
+        if (!(user instanceof Manager manager)) {
+            throw new DomainValidationException("User is not a manager");
+        }
+
+        AdminLevel level = AdminLevel.valueOf(adminLevel);
+
+        SystemAdmin newAdmin = new SystemAdmin(
+                manager.getFirstName(),
+                manager.getLastName(),
+                manager.getMiddleName(),
+                manager.getEmail(),
+                manager.getPhone(),
+                "",
+                manager.getId(),
+                level
+        );
+
+        userRepository.delete(managerId);
+        SystemAdmin saved = (SystemAdmin) saveUser(newAdmin);
+
+        admin.logAction("PROMOTE_MANAGER_TO_ADMIN", "Promoted manager " + managerId + " to admin level " + adminLevel);
+        saveUser(admin);
+
+        return userMapper.toSystemAdminResponse(saved);
     }
 }

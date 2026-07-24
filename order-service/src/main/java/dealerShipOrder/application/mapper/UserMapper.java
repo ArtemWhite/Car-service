@@ -119,10 +119,12 @@ public class UserMapper
         response.setFullName(user.getFullName());
         response.setEmail(user.getEmail());
         response.setPhone(user.getPhone());
-        response.setStatus(user.getStatus().name());
-        response.setStatusDisplayName(user.getStatus().getDisplayName());
+        response.setUserType(user.getUserType() != null ? user.getUserType().name() : null);
+        response.setStatus(user.getStatus() != null ? user.getStatus().name() : null);
+        response.setStatusDisplayName(user.getStatus() != null ? user.getStatus().getDisplayName() : null);
         response.setRegisteredAt(user.getRegisteredAt());
         response.setLastActiveAt(user.getLastActiveAt());
+        response.setEmployeeId(user.getId());
     }
 
     public List<UserBaseResponse> toBaseResponseList(List<User> users) {

@@ -4,6 +4,7 @@ import dealerShipOrder.domain.models.users.User;
 import dealerShipOrder.domain.models.users.UserStatus;
 import dealerShipOrder.domain.models.users.client.Client;
 import dealerShipOrder.domain.models.users.manager.Manager;
+import dealerShipOrder.domain.models.users.systemAdmin.AdminLevel;
 import dealerShipOrder.domain.models.users.systemAdmin.SystemAdmin;
 import dealerShipOrder.domain.models.users.warehouseAdmin.WarehouseAdmin;
 import dealerShipOrder.infrastructure.entities.userEntities.ClientEntity;
@@ -74,6 +75,35 @@ public class UserRoleAdapter {
         } else if (entity instanceof WarehouseAdminEntity warehouseAdminEntity) {
             return warehouseAdminMapper.toDomain(warehouseAdminEntity);
         }
-        throw new IllegalArgumentException("Unknown entity type: " + entity.getClass());
+        return createMinimalDomain(entity);
+    }
+
+    private User createMinimalDomain(dealerShipOrder.infrastructure.entities.userEntities.UserEntity entity) {
+        String userType = entity.getUserType() != null ? entity.getUserType().getName() : "CLIENT";
+        User user = switch (userType) {
+            case "CLIENT" -> new Client(entity.getId().toString(),
+                    entity.getFirstName(), entity.getLastName(), entity.getMiddleName(),
+                    entity.getEmail(), entity.getPhone(), entity.getPasswordHash());
+            case "MANAGER" -> new Manager(
+                    entity.getFirstName(), entity.getLastName(), entity.getMiddleName(),
+                    entity.getEmail(), entity.getPhone(), entity.getPasswordHash(),
+                    entity.getId().toString());
+            case "SYSTEM_ADMIN" -> new SystemAdmin(
+                    entity.getFirstName(), entity.getLastName(), entity.getMiddleName(),
+                    entity.getEmail(), entity.getPhone(), entity.getPasswordHash(),
+                    entity.getId().toString(), AdminLevel.JUNIOR_ADMIN);
+            case "WAREHOUSE_ADMIN" -> new WarehouseAdmin(
+                    entity.getFirstName(), entity.getLastName(), entity.getMiddleName(),
+                    entity.getEmail(), entity.getPhone(), entity.getPasswordHash(),
+                    entity.getId().toString());
+            default -> throw new IllegalArgumentException("Unknown user type: " + userType);
+        };
+        if (entity.getStatus() != null) {
+            switch (entity.getStatus().getName()) {
+                case "BLOCKED" -> user.block();
+                case "INACTIVE" -> user.deactivate();
+            }
+        }
+        return user;
     }
 }

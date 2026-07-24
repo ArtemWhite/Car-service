@@ -122,6 +122,11 @@ public class UserPresentationMapper {
     public UserBasePresentationResponse toPresentation(UserBaseResponse source) {
         if (source == null) return null;
 
+        if (source instanceof ClientResponse cr) return toPresentation(cr);
+        if (source instanceof ManagerResponse mr) return toPresentation(mr);
+        if (source instanceof SystemAdminResponse sar) return toPresentation(sar);
+        if (source instanceof WarehouseAdminResponse war) return toPresentation(war);
+
         return UserBasePresentationResponse.builder()
                 .id(source.getId())
                 .firstName(source.getFirstName())

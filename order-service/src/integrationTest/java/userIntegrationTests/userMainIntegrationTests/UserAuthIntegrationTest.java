@@ -22,10 +22,11 @@ class UserAuthIntegrationTest extends UserBaseIntegrationTest {
     @BeforeEach
     void setUp() {
         cleanUpUsers();
+        createTestUsers();
 
         testClientId = UUID.randomUUID().toString();
         testClientEmail = "authclient@test.com";
-        testClientPasswordHash = "hashed_password_123";
+        testClientPasswordHash = "hashed_" + testClientId.substring(0, 8);
 
         createUser(testClientId, "CLIENT", testClientEmail, "ACTIVE");
         createClient(testClientId);
@@ -64,14 +65,9 @@ class UserAuthIntegrationTest extends UserBaseIntegrationTest {
 
     @Test
     void shouldNotAuthenticateBlockedUser() throws Exception {
-        String blockedId = UUID.randomUUID().toString();
-        String blockedEmail = "blocked@test.com";
-        createUser(blockedId, "CLIENT", blockedEmail, "BLOCKED");
-        createClient(blockedId);
-
         Map<String, String> authRequest = new HashMap<>();
-        authRequest.put("email", blockedEmail);
-        authRequest.put("password", "hashed_" + blockedId.substring(0, 8));
+        authRequest.put("email", "blocked@test.com");
+        authRequest.put("password", "hashed_" + blockedUserId.substring(0, 8));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -82,14 +78,9 @@ class UserAuthIntegrationTest extends UserBaseIntegrationTest {
 
     @Test
     void shouldNotAuthenticateInactiveUser() throws Exception {
-        String inactiveId = UUID.randomUUID().toString();
-        String inactiveEmail = "inactive@test.com";
-        createUser(inactiveId, "CLIENT", inactiveEmail, "INACTIVE");
-        createClient(inactiveId);
-
         Map<String, String> authRequest = new HashMap<>();
-        authRequest.put("email", inactiveEmail);
-        authRequest.put("password", "hashed_" + inactiveId.substring(0, 8));
+        authRequest.put("email", "inactive@test.com");
+        authRequest.put("password", "hashed_" + inactiveUserId.substring(0, 8));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -256,8 +247,6 @@ class UserAuthIntegrationTest extends UserBaseIntegrationTest {
 
     @Test
     void shouldUnblockUserByAdmin() throws Exception {
-        createTestUsers();
-
         assertThat(getUserStatus(blockedUserId)).isEqualTo("BLOCKED");
 
         mockMvc.perform(post("/api/admin/users/{userId}/unblock", blockedUserId)

@@ -26,7 +26,7 @@ public class TestSecurityConfiguration {
                 .antMatchers("/api/manager/**").hasAnyRole("MANAGER", "SYSTEM_ADMIN")
                 .antMatchers("/api/client/**").hasRole("CLIENT")
                 .antMatchers("/api/warehouse-admin/**").hasAnyRole("WAREHOUSE_ADMIN", "SYSTEM_ADMIN")
-                .antMatchers("/api/orders/**", "/api/payments/**", "/api/test-drives/**",
+                .antMatchers("/api/auth/**", "/api/orders/**", "/api/payments/**", "/api/test-drives/**",
                         "/api/users/**", "/api/v1/**", "/swagger-ui/**", "/v3/api-docs/**",
                         "/actuator/health").permitAll()
                 .anyRequest().authenticated();

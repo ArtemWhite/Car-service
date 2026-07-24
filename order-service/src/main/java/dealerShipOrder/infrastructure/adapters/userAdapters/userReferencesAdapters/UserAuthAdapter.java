@@ -50,6 +50,32 @@ public class UserAuthAdapter {
         } else if (entity instanceof WarehouseAdminEntity warehouseAdminEntity) {
             return warehouseAdminMapper.toDomain(warehouseAdminEntity);
         }
-        throw new IllegalArgumentException("Unknown entity type: " + entity.getClass());
+        String userType = entity.getUserType() != null ? entity.getUserType().getName() : "CLIENT";
+        dealerShipOrder.domain.models.users.User user = switch (userType) {
+            case "CLIENT" -> new dealerShipOrder.domain.models.users.client.Client(entity.getId().toString(),
+                    entity.getFirstName(), entity.getLastName(), entity.getMiddleName(),
+                    entity.getEmail(), entity.getPhone(), entity.getPasswordHash());
+            case "MANAGER" -> new dealerShipOrder.domain.models.users.manager.Manager(
+                    entity.getFirstName(), entity.getLastName(), entity.getMiddleName(),
+                    entity.getEmail(), entity.getPhone(), entity.getPasswordHash(),
+                    entity.getId().toString());
+            case "SYSTEM_ADMIN" -> new dealerShipOrder.domain.models.users.systemAdmin.SystemAdmin(
+                    entity.getFirstName(), entity.getLastName(), entity.getMiddleName(),
+                    entity.getEmail(), entity.getPhone(), entity.getPasswordHash(),
+                    entity.getId().toString(),
+                    dealerShipOrder.domain.models.users.systemAdmin.AdminLevel.JUNIOR_ADMIN);
+            case "WAREHOUSE_ADMIN" -> new dealerShipOrder.domain.models.users.warehouseAdmin.WarehouseAdmin(
+                    entity.getFirstName(), entity.getLastName(), entity.getMiddleName(),
+                    entity.getEmail(), entity.getPhone(), entity.getPasswordHash(),
+                    entity.getId().toString());
+            default -> throw new IllegalArgumentException("Unknown user type: " + userType);
+        };
+        if (entity.getStatus() != null) {
+            switch (entity.getStatus().getName()) {
+                case "BLOCKED" -> user.block();
+                case "INACTIVE" -> user.deactivate();
+            }
+        }
+        return user;
     }
 }

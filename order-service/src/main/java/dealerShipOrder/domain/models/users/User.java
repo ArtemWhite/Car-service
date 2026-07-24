@@ -4,6 +4,8 @@ import dealerShipOrder.domain.models.expection.DomainValidationException;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public abstract class User
@@ -20,6 +22,7 @@ public abstract class User
     private final LocalDateTime registeredAt;
     private LocalDateTime lastActiveAt;
     private LocalDateTime lastPasswordChangeAt;
+    private final List<String> previousPasswordHashes;
 
     protected User(String id, String firstName, String lastName, String middleName, String email, String phone, String password, UserType userType) {
         this.id = id;
@@ -34,6 +37,7 @@ public abstract class User
         this.lastActiveAt = LocalDateTime.now();
         this.lastPasswordChangeAt = LocalDateTime.now();
         this.userType = userType;
+        this.previousPasswordHashes = new ArrayList<>();
     }
 
     public boolean authenticate(String password) {
@@ -44,7 +48,12 @@ public abstract class User
         if (!authenticate(oldPassword)) {
             throw new DomainValidationException("Old password is incorrect");
         }
-        this.passwordHash = hashPassword(newPassword);
+        String newHash = hashPassword(newPassword);
+        if (this.previousPasswordHashes.contains(newHash)) {
+            throw new DomainValidationException("Cannot reuse old password");
+        }
+        this.previousPasswordHashes.add(this.passwordHash);
+        this.passwordHash = newHash;
         this.lastPasswordChangeAt = LocalDateTime.now();
     }
 
