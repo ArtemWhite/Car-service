@@ -46,11 +46,17 @@ public class WarehouseAdmin extends User {
     }
 
     public void startShift() {
+        if (this.onDuty) {
+            throw new DomainValidationException("Shift already started");
+        }
         this.onDuty = true;
         updateLastActive();
     }
 
     public void endShift() {
+        if (!this.onDuty) {
+            throw new DomainValidationException("No active shift to end");
+        }
         this.onDuty = false;
         updateLastActive();
     }

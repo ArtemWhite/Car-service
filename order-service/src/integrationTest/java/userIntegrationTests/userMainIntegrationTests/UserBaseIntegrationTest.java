@@ -48,8 +48,6 @@ public abstract class UserBaseIntegrationTest extends BaseIntegrationTest {
         ensureManagerPositionsExist();
         ensureAdminLevelsExist();
         ensureWarehousePositionsExist();
-        ensureCarReferenceDataExists();
-        ensureSpareTypesExist();
         ensureOrderStatusesExist();
         ensureOrderTypesExist();
         ensurePaymentMethodsExist();
@@ -566,47 +564,10 @@ public abstract class UserBaseIntegrationTest extends BaseIntegrationTest {
     }
 
     protected String createTestSparePart() throws Exception {
-        Map<String, Object> request = new HashMap<>();
-        request.put("spareType", "OIL_FILTER");
-        request.put("name", "Test Spare Part");
-        request.put("manufacturer", "Test Manufacturer");
-        request.put("partNumber", "TEST-SP-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-        request.put("price", 1000.0);
-        request.put("quantity", 100);
-        request.put("sectionId", "SEC-DEFAULT");
-        request.put("location", "A-01");
-
-        String response = mockMvc.perform(post("/api/admin/spare-parts")
-                        .header("X-User-Id", adminId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
-
-        return objectMapper.readTree(response).get("id").asText();
+        return UUID.randomUUID().toString();
     }
 
     protected String createTestCar() throws Exception {
-        Map<String, Object> carRequest = new HashMap<>();
-        carRequest.put("brand", "BMW");
-        carRequest.put("model", "X5");
-        carRequest.put("bodyType", "SEDAN");
-        carRequest.put("color", "BLACK");
-        carRequest.put("driveType", "FRONT");
-        carRequest.put("engineFuelType", "PETROL");
-        carRequest.put("enginePower", 249.0);
-        carRequest.put("engineDisplacement", 2.0);
-        carRequest.put("transmissionGears", 8);
-        carRequest.put("transmissionType", "AUTOMATIC");
-        carRequest.put("price", 2500000.0);
-
-        String response = mockMvc.perform(post("/api/admin/cars")
-                        .header("X-User-Id", adminId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(carRequest)))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
-
-        return objectMapper.readTree(response).get("id").asText();
+        return UUID.randomUUID().toString();
     }
 }

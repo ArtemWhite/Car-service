@@ -10,6 +10,8 @@ import dealerShipOrder.infrastructure.mappers.userEntitiesMappers.userMappers.Ba
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,7 +38,7 @@ public abstract class SystemAdminEntityMapper extends BaseUserEntityMapper {
     public SystemAdmin toDomain(SystemAdminEntity entity) {
         if (entity == null) return null;
 
-        return new SystemAdmin(
+        SystemAdmin admin = new SystemAdmin(
                 entity.getFirstName(),
                 entity.getLastName(),
                 entity.getMiddleName(),
@@ -46,6 +48,11 @@ public abstract class SystemAdminEntityMapper extends BaseUserEntityMapper {
                 entity.getId().toString(),
                 toAdminLevel(entity.getAdminLevel())
         );
+
+        restorePermissions(admin, toPermissions(entity.getPermissions()));
+        restoreLastLoginAt(admin, toLocalDateTime(entity.getLastLoginAt()));
+
+        return admin;
     }
 
     protected AdminLevelEntity toAdminLevelEntity(AdminLevel level) {
@@ -86,5 +93,30 @@ public abstract class SystemAdminEntityMapper extends BaseUserEntityMapper {
             return toDomain(adminEntity);
         }
         throw new IllegalArgumentException("Expected SystemAdminEntity, got: " + entity.getClass());
+    }
+
+    private void restorePermissions(SystemAdmin admin, Set<SystemPermission> permissions) {
+        try {
+            Field field = SystemAdmin.class.getDeclaredField("permissions");
+            field.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Set<SystemPermission> set = (Set<SystemPermission>) field.get(admin);
+            set.clear();
+            if (permissions != null) {
+                set.addAll(permissions);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to restore permissions", e);
+        }
+    }
+
+    private void restoreLastLoginAt(SystemAdmin admin, LocalDateTime lastLoginAt) {
+        try {
+            Field field = SystemAdmin.class.getDeclaredField("lastLoginAt");
+            field.setAccessible(true);
+            field.set(admin, lastLoginAt);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to restore lastLoginAt", e);
+        }
     }
 }

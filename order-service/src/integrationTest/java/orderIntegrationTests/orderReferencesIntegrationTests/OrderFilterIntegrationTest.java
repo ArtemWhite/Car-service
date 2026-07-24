@@ -48,11 +48,6 @@ class OrderFilterIntegrationTest extends BaseIntegrationTest {
     void setUp() throws Exception {
         jdbcTemplate.execute("DELETE FROM order_history_entries");
         jdbcTemplate.execute("DELETE FROM orders");
-        jdbcTemplate.execute("DELETE FROM cars");
-        jdbcTemplate.execute("DELETE FROM engines");
-        jdbcTemplate.execute("DELETE FROM transmissions");
-        jdbcTemplate.execute("DELETE FROM car_models");
-        jdbcTemplate.execute("DELETE FROM car_brands");
         jdbcTemplate.execute("DELETE FROM client_orders");
         jdbcTemplate.execute("DELETE FROM manager_orders");
         jdbcTemplate.execute("DELETE FROM users WHERE email LIKE '%@test.com'");
@@ -94,7 +89,7 @@ class OrderFilterIntegrationTest extends BaseIntegrationTest {
                 UUID.fromString(adminId), adminLevelId
         );
 
-        carId = createCarAndGetId();
+        carId = UUID.randomUUID().toString();
     }
 
     private void createReferenceDataIfNotExists() {
@@ -115,63 +110,6 @@ class OrderFilterIntegrationTest extends BaseIntegrationTest {
             jdbcTemplate.update("INSERT INTO admin_levels (id, name, display_name, level, created_at, updated_at, removed) VALUES (?::uuid, 'SUPER_ADMIN', 'Супер администратор', 100, NOW(), NOW(), false)", UUID.randomUUID());
             jdbcTemplate.update("INSERT INTO admin_levels (id, name, display_name, level, created_at, updated_at, removed) VALUES (?::uuid, 'ADMIN', 'Администратор', 50, NOW(), NOW(), false)", UUID.randomUUID());
         }
-
-        if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM car_statuses WHERE name = 'AVAILABLE'", Integer.class) == 0) {
-            jdbcTemplate.update("INSERT INTO car_statuses (id, name, display_name, created_at, updated_at, removed) VALUES (?::uuid, 'AVAILABLE', 'Доступен', NOW(), NOW(), false)", UUID.randomUUID());
-            jdbcTemplate.update("INSERT INTO car_statuses (id, name, display_name, created_at, updated_at, removed) VALUES (?::uuid, 'UNAVAILABLE', 'Недоступен', NOW(), NOW(), false)", UUID.randomUUID());
-        }
-    }
-
-    private String createCarAndGetId() throws Exception {
-        UUID brandId = UUID.randomUUID();
-        jdbcTemplate.update(
-                "INSERT INTO car_brands (id, name, display_name, country_made, created_at, updated_at, removed) " +
-                        "VALUES (?::uuid, 'BMW', 'БМВ', 'Germany', NOW(), NOW(), false)",
-                brandId
-        );
-
-        UUID modelId = UUID.randomUUID();
-        jdbcTemplate.update(
-                "INSERT INTO car_models (id, name, brand_id, generation, created_at, updated_at, removed) " +
-                        "VALUES (?::uuid, 'X5', ?::uuid, 'G05', NOW(), NOW(), false)",
-                modelId, brandId
-        );
-
-        UUID fuelTypeId = jdbcTemplate.queryForObject(
-                "SELECT id FROM engine_fuel_types WHERE name = 'PETROL'", UUID.class);
-        UUID engineId = UUID.randomUUID();
-        jdbcTemplate.update(
-                "INSERT INTO engines (id, fuel_type_id, displacement, horse_power, created_at, updated_at, removed) " +
-                        "VALUES (?::uuid, ?::uuid, 2.0, 249.0, NOW(), NOW(), false)",
-                engineId, fuelTypeId
-        );
-
-        UUID transmissionTypeId = jdbcTemplate.queryForObject(
-                "SELECT id FROM transmission_types WHERE name = 'AUTOMATIC'", UUID.class);
-        UUID transmissionId = UUID.randomUUID();
-        jdbcTemplate.update(
-                "INSERT INTO transmissions (id, type_id, gears, created_at, updated_at, removed) " +
-                        "VALUES (?::uuid, ?::uuid, 8, NOW(), NOW(), false)",
-                transmissionId, transmissionTypeId
-        );
-
-        UUID carStatusId = jdbcTemplate.queryForObject(
-                "SELECT id FROM car_statuses WHERE name = 'AVAILABLE'", UUID.class);
-        UUID bodyId = jdbcTemplate.queryForObject(
-                "SELECT id FROM car_bodies WHERE name = 'SEDAN'", UUID.class);
-        UUID colorId = jdbcTemplate.queryForObject(
-                "SELECT id FROM car_colors WHERE name = 'BLACK'", UUID.class);
-        UUID driveTypeId = jdbcTemplate.queryForObject(
-                "SELECT id FROM drive_types WHERE name = 'FRONT'", UUID.class);
-
-        UUID carUuid = UUID.randomUUID();
-        jdbcTemplate.update(
-                "INSERT INTO cars (id, brand_id, model_id, body_id, color_id, drive_type_id, engine_id, transmission_id, price, status_id, created_at, updated_at, removed) " +
-                        "VALUES (?::uuid, ?::uuid, ?::uuid, ?::uuid, ?::uuid, ?::uuid, ?::uuid, ?::uuid, 2500000.0, ?::uuid, NOW(), NOW(), false)",
-                carUuid, brandId, modelId, bodyId, colorId, driveTypeId, engineId, transmissionId, carStatusId
-        );
-
-        return carUuid.toString();
     }
 
     private String createOrder() throws Exception {

@@ -88,45 +88,10 @@ class OrderClientControllerIntegrationTest extends BaseIntegrationTest {
         if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM admin_levels WHERE name = 'SUPER_ADMIN'", Integer.class) == 0) {
             jdbcTemplate.update("INSERT INTO admin_levels (id, name, display_name, level, created_at, updated_at, removed) VALUES (?::uuid, 'SUPER_ADMIN', 'Супер администратор', 100, NOW(), NOW(), false)", UUID.randomUUID());
         }
-        if (jdbcTemplate.queryForObject("SELECT COUNT(*) FROM car_statuses WHERE name = 'AVAILABLE'", Integer.class) == 0) {
-            jdbcTemplate.update("INSERT INTO car_statuses (id, name, display_name, created_at, updated_at, removed) VALUES (?::uuid, 'AVAILABLE', 'Доступен', NOW(), NOW(), false)", UUID.randomUUID());
-        }
     }
 
     private String createCarAndGetId() throws Exception {
-        String request = """
-        {
-            "brand": "BMW",
-            "model": "X5",
-            "bodyType": "SEDAN",
-            "color": "BLACK",
-            "driveType": "FRONT",
-            "engineFuelType": "PETROL",
-            "enginePower": 249.0,
-            "engineDisplacement": 2.0,
-            "transmissionGears": 8,
-            "transmissionType": "AUTOMATIC",
-            "price": 2500000.00
-        }
-        """;
-
-        String response = mockMvc.perform(post("/api/admin/cars")
-                        .header("X-User-Id", adminId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
-
-        String id = objectMapper.readTree(response).get("id").asText();
-
-        String updateRequest = "{\"status\": \"AVAILABLE\"}";
-        mockMvc.perform(put("/api/admin/cars/{id}", id)
-                        .header("X-User-Id", adminId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(updateRequest))
-                .andExpect(status().isOk());
-
-        return id;
+        return UUID.randomUUID().toString();
     }
 
     @Test

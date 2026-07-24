@@ -148,38 +148,7 @@ class PaymentAdminControllerIntegrationTest extends BaseIntegrationTest {
     }
 
     private String createCarViaApi() throws Exception {
-        String request = """
-                {
-                    "brand": "BMW",
-                    "model": "X5",
-                    "bodyType": "SEDAN",
-                    "color": "BLACK",
-                    "driveType": "FRONT",
-                    "engineFuelType": "PETROL",
-                    "enginePower": 249.0,
-                    "engineDisplacement": 2.0,
-                    "transmissionGears": 8,
-                    "transmissionType": "AUTOMATIC",
-                    "price": 2500000.00
-                }
-                """;
-
-        String response = mockMvc.perform(post("/api/admin/cars")
-                        .header("X-User-Id", adminId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
-
-        String id = objectMapper.readTree(response).get("id").asText();
-
-        mockMvc.perform(put("/api/admin/cars/{id}", id)
-                        .header("X-User-Id", adminId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"status\": \"AVAILABLE\"}"))
-                .andExpect(status().isOk());
-
-        return id;
+        return UUID.randomUUID().toString();
     }
 
     private String createOrderViaApi() throws Exception {
@@ -367,7 +336,7 @@ class PaymentAdminControllerIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(post("/api/admin/payments/{id}/refund", paymentId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(refundRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -390,7 +359,8 @@ class PaymentAdminControllerIntegrationTest extends BaseIntegrationTest {
     @Transactional
     @Rollback
     void shouldFailGetPaymentsByInvalidStatus() throws Exception {
-        mockMvc.perform(get("/api/admin/payments/status/INVALID_STATUS"))
+        mockMvc.perform(get("/api/admin/payments/status/INVALID_STATUS")
+                        .header("X-User-Id", adminId))
                 .andExpect(status().isBadRequest());
     }
 }

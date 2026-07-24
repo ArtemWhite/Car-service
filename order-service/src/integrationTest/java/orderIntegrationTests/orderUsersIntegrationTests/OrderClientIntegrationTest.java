@@ -92,39 +92,7 @@ class OrderClientIntegrationTest extends BaseIntegrationTest {
     }
 
     private String createCarAndGetId() throws Exception {
-        String request = """
-        {
-            "brand": "BMW",
-            "model": "X5",
-            "bodyType": "SEDAN",
-            "color": "BLACK",
-            "driveType": "FRONT",
-            "engineFuelType": "PETROL",
-            "enginePower": 249.0,
-            "engineDisplacement": 2.0,
-            "transmissionGears": 8,
-            "transmissionType": "AUTOMATIC",
-            "price": 2500000.00
-        }
-        """;
-
-        String response = mockMvc.perform(post("/api/admin/cars")
-                        .header("X-User-Id", adminId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
-
-        String id = objectMapper.readTree(response).get("id").asText();
-
-        String updateRequest = "{\"status\": \"AVAILABLE\"}";
-        mockMvc.perform(put("/api/admin/cars/{id}", id)
-                        .header("X-User-Id", adminId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(updateRequest))
-                .andExpect(status().isOk());
-
-        return id;
+        return UUID.randomUUID().toString();
     }
 
     @Test

@@ -12,7 +12,9 @@ import dealerShipOrder.infrastructure.mappers.userEntitiesMappers.userMappers.Ba
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.lang.reflect.Field;
 import java.util.HashSet;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public abstract class WarehouseAdminEntityMapper extends BaseUserEntityMapper {
@@ -34,7 +36,7 @@ public abstract class WarehouseAdminEntityMapper extends BaseUserEntityMapper {
     public WarehouseAdmin toDomain(WarehouseAdminEntity entity) {
         if (entity == null) return null;
 
-        return new WarehouseAdmin(
+        WarehouseAdmin admin = new WarehouseAdmin(
                 entity.getFirstName(),
                 entity.getLastName(),
                 entity.getMiddleName(),
@@ -43,6 +45,12 @@ public abstract class WarehouseAdminEntityMapper extends BaseUserEntityMapper {
                 entity.getPasswordHash(),
                 entity.getId().toString()
         );
+
+        restorePosition(admin, entity.getPosition());
+        restoreOnDuty(admin, entity.isOnDuty());
+        restoreManagedSectionIds(admin, entity.getManagedSectionIds());
+
+        return admin;
     }
 
     protected WarehousePositionEntity toWarehousePositionEntity(WarehousePosition position) {
@@ -68,5 +76,36 @@ public abstract class WarehouseAdminEntityMapper extends BaseUserEntityMapper {
             return toDomain(adminEntity);
         }
         throw new IllegalArgumentException("Expected WarehouseAdminEntity, got: " + entity.getClass());
+    }
+
+    private void restorePosition(WarehouseAdmin admin, WarehousePositionEntity positionEntity) {
+        if (positionEntity != null) {
+            admin.setPosition(toWarehousePosition(positionEntity));
+        }
+    }
+
+    private void restoreOnDuty(WarehouseAdmin admin, boolean onDuty) {
+        try {
+            Field field = WarehouseAdmin.class.getDeclaredField("onDuty");
+            field.setAccessible(true);
+            field.set(admin, onDuty);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to restore onDuty", e);
+        }
+    }
+
+    private void restoreManagedSectionIds(WarehouseAdmin admin, java.util.Set<String> sectionIds) {
+        try {
+            Field field = WarehouseAdmin.class.getDeclaredField("managedSectionIds");
+            field.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            java.util.Set<String> set = (java.util.Set<String>) field.get(admin);
+            set.clear();
+            if (sectionIds != null) {
+                set.addAll(sectionIds);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to restore managedSectionIds", e);
+        }
     }
 }

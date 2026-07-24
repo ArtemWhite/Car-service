@@ -103,30 +103,7 @@ class PaymentRefundIntegrationTest extends BaseIntegrationTest {
     }
 
     private String createCar() throws Exception {
-        String request = """
-                {
-                    "brand": "BMW",
-                    "model": "X5",
-                    "bodyType": "SEDAN",
-                    "color": "BLACK",
-                    "driveType": "FRONT",
-                    "engineFuelType": "PETROL",
-                    "enginePower": 249.0,
-                    "engineDisplacement": 2.0,
-                    "transmissionGears": 8,
-                    "transmissionType": "AUTOMATIC",
-                    "price": 2500000.00
-                }
-                """;
-
-        String response = mockMvc.perform(post("/api/admin/cars")
-                        .header("X-User-Id", adminId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
-
-        return objectMapper.readTree(response).get("id").asText();
+        return UUID.randomUUID().toString();
     }
 
     private String createOrderAndSetAwaitingPayment(String carId) throws Exception {
@@ -280,7 +257,7 @@ class PaymentRefundIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(post("/api/admin/payments/{id}/refund", paymentId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test

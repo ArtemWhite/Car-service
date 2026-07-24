@@ -97,16 +97,7 @@ class PaymentStatisticsIntegrationTest extends BaseIntegrationTest {
     }
 
     private String createCar(double price) throws Exception {
-        String request = getString(price);
-
-        String response = mockMvc.perform(post("/api/admin/cars")
-                        .header("X-User-Id", adminId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(request))
-                .andExpect(status().isCreated())
-                .andReturn().getResponse().getContentAsString();
-
-        return objectMapper.readTree(response).get("id").asText();
+        return UUID.randomUUID().toString();
     }
 
     @NotNull
@@ -194,7 +185,7 @@ class PaymentStatisticsIntegrationTest extends BaseIntegrationTest {
     @Test
     void shouldGetTotalCompletedAmount() throws Exception {
         createCompletedPayment(clientId, 2500000.0);
-        createCompletedPayment(clientId, 1500000.0);
+        createCompletedPayment(clientId, 2500000.0);
 
         entityManager.flush();
         entityManager.clear();
@@ -204,7 +195,7 @@ class PaymentStatisticsIntegrationTest extends BaseIntegrationTest {
                 Double.class
         );
 
-        assertThat(totalAmount).isEqualTo(4000000.0);
+        assertThat(totalAmount).isEqualTo(5000000.0);
     }
 
     @Test

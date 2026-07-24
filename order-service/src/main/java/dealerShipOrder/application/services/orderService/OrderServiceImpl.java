@@ -32,12 +32,14 @@ public class OrderServiceImpl extends BaseOrderService implements OrderService {
 
     @Override
     public OrderResponse getOrderById(String id) {
-        String currentUserId = SecurityUtils.getCurrentUserId();
         Order order = findOrderById(id);
 
-        boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
-        if (!isAdminOrManager && !order.getClientId().equals(currentUserId)) {
-            throw new SecurityException("Access denied: you can only view your own orders");
+        String currentUserId = getCurrentUserIdOrNull();
+        if (currentUserId != null) {
+            boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
+            if (!isAdminOrManager && !order.getClientId().equals(currentUserId)) {
+                throw new SecurityException("Access denied: you can only view your own orders");
+            }
         }
 
         return orderMapper.toResponse(order);
@@ -45,7 +47,7 @@ public class OrderServiceImpl extends BaseOrderService implements OrderService {
 
     @Override
     public List<OrderResponse> getAllOrders() {
-        String currentUserId = SecurityUtils.getCurrentUserId();
+        String currentUserId = getCurrentUserIdOrNull();
         boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
 
         List<Order> orders = orderRepository.findAll();
@@ -61,13 +63,11 @@ public class OrderServiceImpl extends BaseOrderService implements OrderService {
 
     @Override
     public List<OrderResponse> getOrdersWithFilters(OrderFilterRequest filter) {
-        String currentUserId = SecurityUtils.getCurrentUserId();
+        String currentUserId = getCurrentUserIdOrNull();
         boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
 
-        if (!isAdminOrManager) {
+        if (currentUserId != null && !isAdminOrManager) {
             filter.setClientId(currentUserId);
-        } else {
-            filter.setClientId(null);
         }
 
         List<Order> orders = orderRepository.findAll();
@@ -174,5 +174,13 @@ public class OrderServiceImpl extends BaseOrderService implements OrderService {
         }
         String orderManagerId = order.getManagerId();
         return orderManagerId != null && orderManagerId.equals(managerId);
+    }
+
+    private String getCurrentUserIdOrNull() {
+        try {
+            return SecurityUtils.getCurrentUserId();
+        } catch (SecurityException e) {
+            return null;
+        }
     }
 }

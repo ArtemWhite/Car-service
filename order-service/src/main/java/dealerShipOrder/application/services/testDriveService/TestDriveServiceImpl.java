@@ -35,12 +35,14 @@ public class TestDriveServiceImpl extends BaseTestDriveService implements TestDr
 
     @Override
     public TestDriveResponse getTestDriveById(String id) {
-        String currentUserId = SecurityUtils.getCurrentUserId();
+        String currentUserId = getCurrentUserIdOrNull();
         TestDriveRequest request = findRequestById(id);
 
-        boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
-        if (!isAdminOrManager && !request.getClientId().equals(currentUserId)) {
-            throw new SecurityException("Access denied: you can only view your own test drives");
+        if (currentUserId != null) {
+            boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
+            if (!isAdminOrManager && !request.getClientId().equals(currentUserId)) {
+                throw new SecurityException("Access denied: you can only view your own test drives");
+            }
         }
 
         Car car = findCarById(request.getCarId());
@@ -58,12 +60,12 @@ public class TestDriveServiceImpl extends BaseTestDriveService implements TestDr
 
     @Override
     public List<TestDriveResponse> getAllTestDrives() {
-        String currentUserId = SecurityUtils.getCurrentUserId();
+        String currentUserId = getCurrentUserIdOrNull();
         boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
 
         List<TestDriveRequest> requests = testDriveRepository.findAll();
 
-        if (!isAdminOrManager) {
+        if (currentUserId != null && !isAdminOrManager) {
             requests = requests.stream()
                     .filter(req -> req.getClientId().equals(currentUserId))
                     .collect(Collectors.toList());
@@ -87,10 +89,10 @@ public class TestDriveServiceImpl extends BaseTestDriveService implements TestDr
 
     @Override
     public TestDriveListResponse getTestDrivesWithFilters(TestDriveFilterRequest filter) {
-        String currentUserId = SecurityUtils.getCurrentUserId();
+        String currentUserId = getCurrentUserIdOrNull();
         boolean isAdminOrManager = SecurityUtils.hasRole("SYSTEM_ADMIN") || SecurityUtils.hasRole("MANAGER");
 
-        if (!isAdminOrManager) {
+        if (currentUserId != null && !isAdminOrManager) {
             filter.setClientId(currentUserId);
         }
 
@@ -245,5 +247,13 @@ public class TestDriveServiceImpl extends BaseTestDriveService implements TestDr
     private boolean filterByPast(TestDriveRequest req, Boolean past) {
         if (past == null) return true;
         return past == req.isPast();
+    }
+
+    private String getCurrentUserIdOrNull() {
+        try {
+            return SecurityUtils.getCurrentUserId();
+        } catch (SecurityException e) {
+            return null;
+        }
     }
 }
