@@ -35,13 +35,48 @@ public class XUserHeaderFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         String userId = request.getHeader("X-User-Id");
+        String uri = request.getRequestURI();
 
-        if (userId != null && !userId.isBlank()) {
+        String authHeader = request.getHeader("Authorization");
+        
+        if (userId == null || userId.isBlank()) {
+            if (uri.equals("/api/users/me")) {
+                if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Invalid or expired token\"}");
+                } else {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Missing X-User-Id header\"}");
+                }
+                return;
+            }
+        } else {
             try {
                 UUID uuid = UUID.fromString(userId);
-                String role = jdbcTemplate.queryForObject(
-                        "SELECT ut.name FROM users u JOIN user_types ut ON u.user_type_id = ut.id WHERE u.id = ?::uuid",
-                        String.class, uuid);
+                Map<String, Object> userData = jdbcTemplate.queryForMap(
+                        "SELECT ut.name as role, us.name as status FROM users u " +
+                                "JOIN user_types ut ON u.user_type_id = ut.id " +
+                                "JOIN user_statuses us ON u.status_id = us.id " +
+                                "WHERE u.id = ?::uuid AND u.removed = false", uuid);
+
+                String role = (String) userData.get("role");
+                String status = (String) userData.get("status");
+
+                if ("BLOCKED".equalsIgnoreCase(status)) {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Account is blocked\"}");
+                    return;
+                }
+
+                if ("INACTIVE".equalsIgnoreCase(status) && !uri.equals("/api/users/me")) {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"Account is inactive\"}");
+                    return;
+                }
 
                 if (role != null) {
                     String springRole = USER_TYPE_TO_ROLE.getOrDefault(role, role);
@@ -60,8 +95,15 @@ public class XUserHeaderFilter extends OncePerRequestFilter {
                     auth.setAuthenticated(true);
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
+            } catch (org.springframework.dao.EmptyResultDataAccessException e) {
+                if (uri.startsWith("/api/users/me")) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    response.setContentType("application/json");
+                    response.getWriter().write("{\"error\":\"User not found\"}");
+                    return;
+                }
             } catch (Exception e) {
-                // User not found or invalid UUID — leave unauthenticated
+                // Invalid UUID format or other error
             }
         }
 

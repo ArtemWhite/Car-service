@@ -10,6 +10,7 @@ import dealerShipOrder.application.dtos.response.userResponse.UserListResponse;
 import dealerShipOrder.application.dtos.response.userResponse.users.SystemAdminResponse;
 import dealerShipOrder.application.dtos.response.userResponse.users.ClientResponse;
 import dealerShipOrder.application.dtos.response.userResponse.users.ManagerResponse;
+import dealerShipOrder.application.dtos.response.userResponse.users.WarehouseAdminResponse;
 import dealerShipOrder.application.mapper.UserMapper;
 import dealerShipOrder.application.services.userService.systemAdmin.SystemAdminServiceImpl;
 import dealerShipOrder.domain.models.expection.DomainValidationException;
@@ -53,6 +54,9 @@ class SystemAdminServiceImplTest {
     @Mock
     private UserMapper userMapper;
 
+    @Mock
+    private dealerShipOrder.infrastructure.jpaRepository.userJpaRepositories.systemAdminJpaRepositories.AuditLogEntryJpaRepository auditLogRepository;
+
     @InjectMocks
     private SystemAdminServiceImpl systemAdminService;
 
@@ -63,6 +67,7 @@ class SystemAdminServiceImplTest {
     private SystemAdminResponse adminResponse;
     private ClientResponse clientResponse;
     private ManagerResponse managerResponse;
+    private WarehouseAdminResponse warehouseAdminResponse;
     private CreateUserRequest createRequest;
     private UpdateUserRequest updateRequest;
     private UserFilterRequest filterRequest;
@@ -83,6 +88,9 @@ class SystemAdminServiceImplTest {
 
         managerResponse = new ManagerResponse();
         managerResponse.setId("test-user-id");
+
+        warehouseAdminResponse = new WarehouseAdminResponse();
+        warehouseAdminResponse.setId("warehouse123");
 
         userBaseResponse = new UserBaseResponse();
         userBaseResponse.setId("user123");
@@ -385,7 +393,6 @@ class SystemAdminServiceImplTest {
 
         when(userRepository.findById("test-user-id")).thenReturn(Optional.of(admin));
         when(userRepository.findById("target123")).thenReturn(Optional.of(targetAdmin));
-        doNothing().when(userRepository).delete("target123");
         when(userRepository.save(any(SystemAdmin.class))).thenReturn(targetAdmin);
         when(userMapper.toSystemAdminResponse(any(SystemAdmin.class))).thenReturn(adminResponse);
         when(userRepository.save(admin)).thenReturn(admin);
@@ -393,7 +400,6 @@ class SystemAdminServiceImplTest {
         SystemAdminResponse result = systemAdminService.promoteAdmin("target123", "ADMIN");
 
         assertNotNull(result);
-        verify(userRepository, times(1)).delete("target123");
     }
 
     @Test
@@ -403,13 +409,13 @@ class SystemAdminServiceImplTest {
         when(userRepository.findById("manager123")).thenReturn(Optional.of(manager));
         when(userRepository.save(manager)).thenReturn(manager);
         when(userRepository.save(admin)).thenReturn(admin);
-        when(userMapper.toSystemAdminResponse(admin)).thenReturn(adminResponse);
+        when(userMapper.toManagerResponse(manager)).thenReturn(managerResponse);
 
-        SystemAdminResponse result = systemAdminService.promoteManager("manager123", "SENIOR_MANAGER");
+        ManagerResponse result = systemAdminService.promoteManager("manager123", "SENIOR_MANAGER");
 
         assertNotNull(result);
         assertEquals(Position.SENIOR_MANAGER, manager.getPosition());
-        verify(userMapper, times(1)).toSystemAdminResponse(admin);
+        verify(userMapper, times(1)).toManagerResponse(manager);
     }
 
     @Test
@@ -419,12 +425,12 @@ class SystemAdminServiceImplTest {
         when(userRepository.findById("warehouse123")).thenReturn(Optional.of(warehouseAdmin));
         when(userRepository.save(warehouseAdmin)).thenReturn(warehouseAdmin);
         when(userRepository.save(admin)).thenReturn(admin);
-        when(userMapper.toSystemAdminResponse(admin)).thenReturn(adminResponse);
+        when(userMapper.toWarehouseAdminResponse(warehouseAdmin)).thenReturn(warehouseAdminResponse);
 
-        SystemAdminResponse result = systemAdminService.promoteWarehouseAdmin("warehouse123", "SENIOR_WAREHOUSE_ADMIN");
+        WarehouseAdminResponse result = systemAdminService.promoteWarehouseAdmin("warehouse123", "SENIOR_WAREHOUSE_ADMIN");
 
         assertNotNull(result);
-        verify(userMapper, times(1)).toSystemAdminResponse(admin);
+        verify(userMapper, times(1)).toWarehouseAdminResponse(warehouseAdmin);
     }
 
     @Test
@@ -433,6 +439,18 @@ class SystemAdminServiceImplTest {
         admin.logAction("TEST", "Test action");
 
         when(userRepository.findById("test-user-id")).thenReturn(Optional.of(admin));
+        
+        dealerShipOrder.infrastructure.entities.userEntities.systemAdminEntities.AuditLogEntryEntity mockEntry = 
+                new dealerShipOrder.infrastructure.entities.userEntities.systemAdminEntities.AuditLogEntryEntity();
+        mockEntry.setId(java.util.UUID.randomUUID());
+        mockEntry.setAction("TEST");
+        mockEntry.setDetails("Test action");
+        mockEntry.setCreatedAt(java.time.Instant.now());
+        dealerShipOrder.infrastructure.entities.userEntities.systemAdminEntities.SystemAdminEntity mockAdminEntity = 
+                new dealerShipOrder.infrastructure.entities.userEntities.systemAdminEntities.SystemAdminEntity();
+        mockAdminEntity.setId(java.util.UUID.randomUUID());
+        mockEntry.setAdmin(mockAdminEntity);
+        when(auditLogRepository.findAll()).thenReturn(List.of(mockEntry));
 
         List<OperationHistoryRequest> result = systemAdminService.getAuditLog();
 

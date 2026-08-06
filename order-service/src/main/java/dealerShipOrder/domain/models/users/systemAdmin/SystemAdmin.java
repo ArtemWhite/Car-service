@@ -10,7 +10,7 @@ import java.util.*;
 
 public class SystemAdmin extends User {
     @Getter
-    private final AdminLevel level;
+    private AdminLevel level;
     private final Set<SystemPermission> permissions;
     private final List<AuditLogEntry> auditLog;
     @Getter
@@ -52,6 +52,11 @@ public class SystemAdmin extends User {
     public void login() {
         this.lastLoginAt = LocalDateTime.now();
         logAction("LOGIN", "Admin logged in");
+    }
+
+    public void promoteTo(AdminLevel newLevel) {
+        this.level = newLevel;
+        this.updateLastActive();
     }
 
     public boolean canPromoteTo(AdminLevel newLevel, SystemAdmin targetAdmin) {

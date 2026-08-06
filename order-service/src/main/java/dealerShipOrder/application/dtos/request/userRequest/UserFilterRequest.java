@@ -5,6 +5,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class UserFilterRequest {
     private String userType;
     private String status;
@@ -15,4 +16,10 @@ public class UserFilterRequest {
     private Boolean active;
     private String managerPosition;
     private String adminLevel;
+    private String query;
+    private Boolean available;
+    private String sectionId;
+    private Boolean newsletterSubscribed;
+    private Integer page;
+    private Integer size;
 }

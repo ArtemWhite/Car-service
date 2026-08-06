@@ -4,20 +4,27 @@ import dealerShipOrder.domain.models.users.User;
 import dealerShipOrder.domain.models.users.client.Client;
 import dealerShipOrder.infrastructure.entities.userEntities.ClientEntity;
 import dealerShipOrder.infrastructure.entities.userEntities.UserEntity;
+import dealerShipOrder.infrastructure.jpaRepository.userJpaRepositories.ClientJpaRepository;
 import dealerShipOrder.infrastructure.mappers.userEntitiesMappers.userMappers.BaseUserEntityMapper;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public abstract class ClientEntityMapper extends BaseUserEntityMapper {
 
+    @Autowired
+    protected ClientJpaRepository clientJpaRepository;
 
     public ClientEntity toEntity(Client client) {
         if (client == null) return null;
 
-        ClientEntity entity = new ClientEntity();
+        UUID uuid = toUuid(client.getId());
+        ClientEntity entity = (uuid != null && clientJpaRepository != null) ?
+                clientJpaRepository.findById(uuid).orElseGet(ClientEntity::new) : new ClientEntity();
         fillBaseUserEntity(entity, client);
         entity.setPreferredContactMethod(client.getPreferredContactMethod());
         entity.setNewsletterSubscribed(client.isNewsletterSubscribed());
@@ -43,6 +50,7 @@ public abstract class ClientEntityMapper extends BaseUserEntityMapper {
         restoreNewsletterSubscribed(client, entity.isNewsletterSubscribed());
         restoreOrderIds(client, entity.getOrderIds());
         restoreTestDriveRequestIds(client, entity.getTestDriveRequestIds());
+        fillBaseUserDomain(client, entity);
 
         return client;
     }

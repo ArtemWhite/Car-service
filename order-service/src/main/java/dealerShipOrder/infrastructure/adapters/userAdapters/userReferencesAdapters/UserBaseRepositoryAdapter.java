@@ -36,7 +36,7 @@ public class UserBaseRepositoryAdapter {
 
     public User save(User user) {
         UserEntity entity = toEntity(user);
-        UserEntity saved = jpaRepository.save(entity);
+        UserEntity saved = jpaRepository.saveAndFlush(entity);
         return toDomain(saved);
     }
 
@@ -59,7 +59,10 @@ public class UserBaseRepositoryAdapter {
     public void delete(String id) {
         try {
             UUID uuid = UUID.fromString(id);
-            jpaRepository.deleteById(uuid);
+            jpaRepository.findById(uuid).ifPresent(entity -> {
+                entity.softDelete();
+                jpaRepository.save(entity);
+            });
         } catch (IllegalArgumentException e) {
 
         }

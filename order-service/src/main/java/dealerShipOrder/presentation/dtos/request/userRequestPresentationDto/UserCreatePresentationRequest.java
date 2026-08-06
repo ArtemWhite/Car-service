@@ -38,7 +38,7 @@ public class UserCreatePresentationRequest {
     private String phone;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 100, message = "Password must be between 8 and 100 characters")
+    @Size(min = 8, max = 100, message = "Password must be at least 8 characters")
     @Schema(description = "Password", example = "strongPassword123")
     private String password;
 
@@ -59,4 +59,8 @@ public class UserCreatePresentationRequest {
 
     @Schema(description = "Managed section IDs (for warehouse admins)")
     private Set<String> managedSectionIds;
+
+    @Min(value = 0, message = "Age cannot be negative")
+    @Schema(description = "Age", example = "25")
+    private Integer age;
 }

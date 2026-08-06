@@ -58,6 +58,39 @@ public abstract class BaseUserEntityMapper {
         }
     }
 
+    protected void fillBaseUserDomain(User user, UserEntity entity) {
+        if (user == null || entity == null) return;
+        try {
+            if (entity.getStatus() != null) {
+                java.lang.reflect.Field statusField = User.class.getDeclaredField("status");
+                statusField.setAccessible(true);
+                statusField.set(user, toUserStatus(entity.getStatus()));
+            }
+            if (entity.getCreatedAt() != null) {
+                java.lang.reflect.Field regField = User.class.getDeclaredField("registeredAt");
+                regField.setAccessible(true);
+                regField.set(user, toLocalDateTime(entity.getCreatedAt()));
+            }
+            if (entity.getLastActiveAt() != null) {
+                java.lang.reflect.Field activeField = User.class.getDeclaredField("lastActiveAt");
+                activeField.setAccessible(true);
+                activeField.set(user, toLocalDateTime(entity.getLastActiveAt()));
+            }
+            if (entity.getLastPasswordChangeAt() != null) {
+                java.lang.reflect.Field passChangeField = User.class.getDeclaredField("lastPasswordChangeAt");
+                passChangeField.setAccessible(true);
+                passChangeField.set(user, toLocalDateTime(entity.getLastPasswordChangeAt()));
+            }
+            if (entity.getPasswordHash() != null) {
+                java.lang.reflect.Field passHashField = User.class.getDeclaredField("passwordHash");
+                passHashField.setAccessible(true);
+                passHashField.set(user, entity.getPasswordHash());
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to restore base user domain fields", e);
+        }
+    }
+
     protected UUID toUuid(String id) {
         if (id == null) return null;
         try {

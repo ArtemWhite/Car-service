@@ -45,6 +45,7 @@ bin/
 ### IDEA ###
 !**/.idea/
 .idea/*
+!.idea/encodings.xml
 df
 dependencies.txt
 logs/*

@@ -70,11 +70,6 @@ public class UserPresentationMapper {
         target.setMiddleName(request.getMiddleName());
         target.setEmail(request.getEmail());
         target.setPhone(request.getPhone());
-        target.setStatus(request.getStatus());
-        target.setPosition(request.getPosition());
-        target.setAvailable(request.getAvailable());
-        target.setWarehousePosition(request.getWarehousePosition());
-        target.setManagedSectionIds(request.getManagedSectionIds());
         target.setPreferredContactMethod(request.getPreferredContactMethod());
         target.setNewsletterSubscribed(request.getNewsletterSubscribed());
 
@@ -85,6 +80,7 @@ public class UserPresentationMapper {
         if (request == null) return new UserFilterRequest();
 
         UserFilterRequest target = new UserFilterRequest();
+        target.setQuery(request.getQuery());
         target.setUserType(request.getUserType());
         target.setStatus(request.getStatus());
         target.setEmail(request.getEmail());
@@ -94,6 +90,11 @@ public class UserPresentationMapper {
         target.setActive(request.getActive());
         target.setManagerPosition(request.getManagerPosition());
         target.setAdminLevel(request.getAdminLevel());
+        target.setAvailable(request.getAvailable());
+        target.setSectionId(request.getSectionId());
+        target.setNewsletterSubscribed(request.getNewsletterSubscribed());
+        target.setPage(request.getPage());
+        target.setSize(request.getSize());
 
         return target;
     }
@@ -127,6 +128,12 @@ public class UserPresentationMapper {
         if (source instanceof SystemAdminResponse sar) return toPresentation(sar);
         if (source instanceof WarehouseAdminResponse war) return toPresentation(war);
 
+        return buildBasePresentation(source);
+    }
+
+    private UserBasePresentationResponse buildBasePresentation(UserBaseResponse source) {
+        if (source == null) return null;
+
         return UserBasePresentationResponse.builder()
                 .id(source.getId())
                 .firstName(source.getFirstName())
@@ -147,7 +154,7 @@ public class UserPresentationMapper {
     public ClientPresentationResponse toPresentation(ClientResponse source) {
         if (source == null) return null;
 
-        UserBasePresentationResponse base = toPresentation((UserBaseResponse) source);
+        UserBasePresentationResponse base = buildBasePresentation(source);
 
         return ClientPresentationResponse.builder()
                 .id(base.getId())
@@ -173,7 +180,7 @@ public class UserPresentationMapper {
     public ManagerPresentationResponse toPresentation(ManagerResponse source) {
         if (source == null) return null;
 
-        UserBasePresentationResponse base = toPresentation((UserBaseResponse) source);
+        UserBasePresentationResponse base = buildBasePresentation(source);
 
         return ManagerPresentationResponse.builder()
                 .id(base.getId())
@@ -200,7 +207,7 @@ public class UserPresentationMapper {
     public SystemAdminPresentationResponse toPresentation(SystemAdminResponse source) {
         if (source == null) return null;
 
-        UserBasePresentationResponse base = toPresentation((UserBaseResponse) source);
+        UserBasePresentationResponse base = buildBasePresentation(source);
 
         return SystemAdminPresentationResponse.builder()
                 .id(base.getId())
@@ -224,7 +231,7 @@ public class UserPresentationMapper {
     public WarehouseAdminPresentationResponse toPresentation(WarehouseAdminResponse source) {
         if (source == null) return null;
 
-        UserBasePresentationResponse base = toPresentation((UserBaseResponse) source);
+        UserBasePresentationResponse base = buildBasePresentation(source);
 
         return WarehouseAdminPresentationResponse.builder()
                 .id(base.getId())

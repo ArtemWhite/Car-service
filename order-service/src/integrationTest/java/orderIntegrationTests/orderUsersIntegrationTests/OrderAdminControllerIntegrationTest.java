@@ -206,6 +206,6 @@ class OrderAdminControllerIntegrationTest extends BaseIntegrationTest {
     @Rollback
     void shouldFailGetOrdersWithoutAdminAuth() throws Exception {
         mockMvc.perform(get("/api/admin/orders"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 }

@@ -19,6 +19,7 @@ class TestDriveSystemAdminServiceIntegrationTest extends TestDriveBaseIntegratio
         request.put("startTime", getFutureTime().toString());
 
         String response = mockMvc.perform(post("/api/client/test-drives")
+                        .header("X-User-Id", clientId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -36,6 +37,7 @@ class TestDriveSystemAdminServiceIntegrationTest extends TestDriveBaseIntegratio
         updateRequest.put("status", "CONFIRMED");
 
         mockMvc.perform(put("/api/admin/test-drives/{id}", requestId)
+                        .header("X-User-Id", adminId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())

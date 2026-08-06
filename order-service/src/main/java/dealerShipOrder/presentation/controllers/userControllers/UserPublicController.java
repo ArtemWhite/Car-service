@@ -22,10 +22,10 @@ public class UserPublicController {
     private final UserService userService;
     private final UserPresentationMapper mapper;
 
-    @GetMapping("/{id}")
-    @Operation(summary = "Get user by ID")
-    public ResponseEntity<UserBasePresentationResponse> getUserById(@PathVariable String id) {
-        var response = userService.getUserById(id);
+    @GetMapping({"/me", "/{id}"})
+    @Operation(summary = "Get user by ID or own profile")
+    public ResponseEntity<UserBasePresentationResponse> getUserById(@PathVariable(required = false) String id) {
+        var response = userService.getUserById(id == null ? "me" : id);
         return ResponseEntity.ok(mapper.toPresentation(response));
     }
 

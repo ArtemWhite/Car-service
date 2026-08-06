@@ -14,6 +14,9 @@ import javax.validation.constraints.Min;
 @Schema(description = "Request to filter users")
 public class UserFilterPresentationRequest {
 
+    @Schema(description = "Search query (email, name)")
+    private String query;
+
     @Schema(description = "User type", example = "CLIENT")
     private String userType;
 
@@ -40,6 +43,15 @@ public class UserFilterPresentationRequest {
 
     @Schema(description = "Admin level filter", example = "SUPER_ADMIN")
     private String adminLevel;
+
+    @Schema(description = "Manager availability", example = "true")
+    private Boolean available;
+
+    @Schema(description = "Warehouse section ID", example = "SEC-01")
+    private String sectionId;
+
+    @Schema(description = "Newsletter subscription flag", example = "true")
+    private Boolean newsletterSubscribed;
 
     @Min(value = 0, message = "Page number must be 0 or greater")
     @Schema(description = "Page number (0-based)", example = "0", defaultValue = "0")

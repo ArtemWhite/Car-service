@@ -67,7 +67,7 @@ class UserAuthIntegrationTest extends UserBaseIntegrationTest {
     void shouldNotAuthenticateBlockedUser() throws Exception {
         Map<String, String> authRequest = new HashMap<>();
         authRequest.put("email", "blocked@test.com");
-        authRequest.put("password", "hashed_" + blockedUserId.substring(0, 8));
+        authRequest.put("password", Integer.toHexString(("hashed_" + blockedUserId.substring(0, 8)).hashCode()));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -80,7 +80,7 @@ class UserAuthIntegrationTest extends UserBaseIntegrationTest {
     void shouldNotAuthenticateInactiveUser() throws Exception {
         Map<String, String> authRequest = new HashMap<>();
         authRequest.put("email", "inactive@test.com");
-        authRequest.put("password", "hashed_" + inactiveUserId.substring(0, 8));
+        authRequest.put("password", Integer.toHexString(("hashed_" + inactiveUserId.substring(0, 8)).hashCode()));
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -337,8 +337,7 @@ class UserAuthIntegrationTest extends UserBaseIntegrationTest {
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/users/me")
-                        .header("Authorization", "Bearer " + token)
-                        .header("X-User-Id", testClientId))
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error").value("Invalid or expired token"));
     }

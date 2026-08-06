@@ -9,17 +9,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class WarehousePositionTest {
 
     @Test
-    @DisplayName("Should have all 3 warehouse positions")
+    @DisplayName("Should have all 5 warehouse positions")
     void shouldHaveAllPositions() {
         WarehousePosition[] positions = WarehousePosition.values();
-        assertEquals(3, positions.length);
+        assertEquals(5, positions.length);
     }
 
     @Test
     @DisplayName("Should have correct display names")
     void shouldHaveCorrectDisplayNames() {
         assertEquals("Кладовщик", WarehousePosition.WAREHOUSE_WORKER.getDisplayName());
+        assertEquals("Кладовщик", WarehousePosition.STOREKEEPER.getDisplayName());
         assertEquals("Старший кладовщик", WarehousePosition.SENIOR_WAREHOUSE_ADMIN.getDisplayName());
+        assertEquals("Старший кладовщик", WarehousePosition.SENIOR_STOREKEEPER.getDisplayName());
         assertEquals("Заведующий складом", WarehousePosition.WAREHOUSE_MANAGER.getDisplayName());
     }
 
@@ -27,7 +29,9 @@ class WarehousePositionTest {
     @DisplayName("Should maintain correct order")
     void shouldMaintainCorrectOrder() {
         assertEquals(0, WarehousePosition.WAREHOUSE_WORKER.ordinal());
-        assertEquals(1, WarehousePosition.SENIOR_WAREHOUSE_ADMIN.ordinal());
-        assertEquals(2, WarehousePosition.WAREHOUSE_MANAGER.ordinal());
+        assertEquals(1, WarehousePosition.STOREKEEPER.ordinal());
+        assertEquals(2, WarehousePosition.SENIOR_WAREHOUSE_ADMIN.ordinal());
+        assertEquals(3, WarehousePosition.SENIOR_STOREKEEPER.ordinal());
+        assertEquals(4, WarehousePosition.WAREHOUSE_MANAGER.ordinal());
     }
 }

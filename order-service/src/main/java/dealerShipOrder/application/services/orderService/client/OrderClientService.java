@@ -8,5 +8,6 @@ import java.util.List;
 public interface OrderClientService {
     OrderResponse createOrder(CreateOrderRequest request);
     List<OrderResponse> getMyOrders();
+    OrderResponse getOrderById(String orderId);
     void cancelOrder(String orderId, String reason);
 }

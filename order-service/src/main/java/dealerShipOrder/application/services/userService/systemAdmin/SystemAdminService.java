@@ -3,7 +3,9 @@ package dealerShipOrder.application.services.userService.systemAdmin;
 import dealerShipOrder.application.dtos.request.userRequest.*;
 import dealerShipOrder.application.dtos.response.userResponse.UserBaseResponse;
 import dealerShipOrder.application.dtos.response.userResponse.UserListResponse;
+import dealerShipOrder.application.dtos.response.userResponse.users.ManagerResponse;
 import dealerShipOrder.application.dtos.response.userResponse.users.SystemAdminResponse;
+import dealerShipOrder.application.dtos.response.userResponse.users.WarehouseAdminResponse;
 import dealerShipOrder.domain.models.users.systemAdmin.SystemPermission;
 
 import java.util.List;
@@ -22,6 +24,8 @@ public interface SystemAdminService {
     UserBaseResponse blockUser(String userId, String reason);
     UserBaseResponse unblockUser(String userId);
     UserBaseResponse deactivateUser(String userId);
+    UserBaseResponse activateUser(String userId);
+    UserBaseResponse restoreUser(String userId);
 
     List<UserBaseResponse> getAllUsers();
     List<UserBaseResponse> getUsersByType(String userType);
@@ -31,8 +35,9 @@ public interface SystemAdminService {
     SystemAdminResponse grantPermission(String targetAdminId, SystemPermission permission);
     SystemAdminResponse revokePermission(String targetAdminId, SystemPermission permission);
     SystemAdminResponse promoteAdmin(String targetAdminId, String newLevel);
-    SystemAdminResponse promoteManager(String managerId, String newPosition);
-    SystemAdminResponse promoteWarehouseAdmin(String targetAdminId, String newPosition);
+    ManagerResponse promoteManager(String managerId, String newPosition);
+    SystemAdminResponse promoteManagerToAdmin(String managerId, String adminLevel);
+    WarehouseAdminResponse promoteWarehouseAdmin(String targetAdminId, String newPosition);
 
     List<OperationHistoryRequest> getAuditLog();
     List<OperationHistoryRequest> getUserAuditLog(String userId);
@@ -45,5 +50,5 @@ public interface SystemAdminService {
     Map<String, Object> getSystemStats();
     Map<String, Object> getUserRegistrationStats(int days);
     List<UserBaseResponse> bulkUpdateUserStatus(List<String> userIds, String status);
-    SystemAdminResponse promoteManagerToAdmin(String managerId, String adminLevel);
+    void bulkDeleteUsers(List<String> userIds, String reason);
 }

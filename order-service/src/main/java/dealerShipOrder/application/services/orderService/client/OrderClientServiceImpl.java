@@ -93,6 +93,13 @@ public class OrderClientServiceImpl extends BaseOrderService implements OrderCli
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public OrderResponse getOrderById(String orderId) {
+        Order order = findOrderById(orderId);
+        return orderMapper.toResponse(order);
+    }
+
+    @Override
     public void cancelOrder(String orderId, String reason) {
         String clientId = SecurityUtils.getCurrentUserId();
         Order order = findOrderById(orderId);

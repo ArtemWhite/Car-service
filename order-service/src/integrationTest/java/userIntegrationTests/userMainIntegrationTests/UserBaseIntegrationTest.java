@@ -142,6 +142,7 @@ public abstract class UserBaseIntegrationTest extends BaseIntegrationTest {
         Object[][] positions = {
                 {"WAREHOUSE_WORKER", "Кладовщик"},
                 {"STOREKEEPER", "Кладовщик"},
+                {"SENIOR_WAREHOUSE_ADMIN", "Старший кладовщик"},
                 {"SENIOR_STOREKEEPER", "Старший кладовщик"},
                 {"WAREHOUSE_MANAGER", "Заведующий складом"}
         };
@@ -448,7 +449,7 @@ public abstract class UserBaseIntegrationTest extends BaseIntegrationTest {
                 "INSERT INTO users (id, first_name, last_name, middle_name, email, phone, password_hash, status_id, user_type_id, last_active_at, last_password_change_at, created_at, updated_at, removed) " +
                         "VALUES (?::uuid, ?, ?, ?, ?, ?, ?, (SELECT id FROM user_statuses WHERE name = ?), (SELECT id FROM user_types WHERE name = ?), NOW(), NOW(), NOW(), NOW(), false)",
                 UUID.fromString(id), "Test", "User", "Testovich", email, "+71234567890",
-                "hashed_" + id.substring(0, 8), status, userType
+                Integer.toHexString(("hashed_" + id.substring(0, 8)).hashCode()), status, userType
         );
     }
 
@@ -518,6 +519,7 @@ public abstract class UserBaseIntegrationTest extends BaseIntegrationTest {
     }
 
     protected String getUserStatus(String userId) {
+        entityManager.flush();
         return jdbcTemplate.queryForObject(
                 "SELECT s.name FROM users u JOIN user_statuses s ON u.status_id = s.id WHERE u.id = ?::uuid AND u.removed = false",
                 String.class, UUID.fromString(userId)
@@ -525,6 +527,7 @@ public abstract class UserBaseIntegrationTest extends BaseIntegrationTest {
     }
 
     protected String getUserType(String userId) {
+        entityManager.flush();
         return jdbcTemplate.queryForObject(
                 "SELECT t.name FROM users u JOIN user_types t ON u.user_type_id = t.id WHERE u.id = ?::uuid AND u.removed = false",
                 String.class, UUID.fromString(userId)
@@ -532,6 +535,7 @@ public abstract class UserBaseIntegrationTest extends BaseIntegrationTest {
     }
 
     protected boolean existsByEmail(String email) {
+        entityManager.flush();
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM users WHERE email = ? AND removed = false",
                 Integer.class, email
@@ -540,6 +544,7 @@ public abstract class UserBaseIntegrationTest extends BaseIntegrationTest {
     }
 
     protected boolean existsById(String userId) {
+        entityManager.flush();
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM users WHERE id = ?::uuid AND removed = false",
                 Integer.class, UUID.fromString(userId)

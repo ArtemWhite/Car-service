@@ -5,6 +5,7 @@ import dealerShipOrder.domain.models.users.systemAdmin.*;
 import dealerShipOrder.infrastructure.entities.userEntities.UserEntity;
 import dealerShipOrder.infrastructure.entities.userEntities.systemAdminEntities.*;
 import dealerShipOrder.infrastructure.jpaRepository.userJpaRepositories.systemAdminJpaRepositories.AdminLevelJpaRepository;
+import dealerShipOrder.infrastructure.jpaRepository.userJpaRepositories.systemAdminJpaRepositories.SystemAdminJpaRepository;
 import dealerShipOrder.infrastructure.jpaRepository.userJpaRepositories.systemAdminJpaRepositories.SystemPermissionJpaRepository;
 import dealerShipOrder.infrastructure.mappers.userEntitiesMappers.userMappers.BaseUserEntityMapper;
 import org.mapstruct.*;
@@ -24,14 +25,43 @@ public abstract class SystemAdminEntityMapper extends BaseUserEntityMapper {
     @Autowired
     protected SystemPermissionJpaRepository permissionRepository;
 
+    @Autowired
+    protected SystemAdminJpaRepository systemAdminJpaRepository;
+
     public SystemAdminEntity toEntity(SystemAdmin admin) {
         if (admin == null) return null;
 
-        SystemAdminEntity entity = new SystemAdminEntity();
+        UUID uuid = toUuid(admin.getId());
+        SystemAdminEntity entity = (uuid != null) ?
+                systemAdminJpaRepository.findById(uuid).orElseGet(SystemAdminEntity::new) : new SystemAdminEntity();
+
         fillBaseUserEntity(entity, admin);
         entity.setAdminLevel(toAdminLevelEntity(admin.getLevel()));
-        entity.setPermissions(toPermissionEntities(admin.getPermissions()));
+        List<SystemPermissionEntity> newPerms = toPermissionEntities(admin.getPermissions());
+        if (entity.getPermissions() != null) {
+            entity.getPermissions().clear();
+            entity.getPermissions().addAll(newPerms);
+        } else {
+            entity.setPermissions(newPerms);
+        }
         entity.setLastLoginAt(toInstant(admin.getLastLoginAt()));
+
+        if (admin.getAuditLog() != null) {
+            List<AuditLogEntryEntity> auditEntities = admin.getAuditLog().stream().map(log -> {
+                AuditLogEntryEntity entry = new AuditLogEntryEntity();
+                entry.setAdmin(entity);
+                entry.setAction(log.getAction());
+                entry.setDetails(log.getDetails());
+                entry.setTimestamp(toInstant(log.getTimestamp()));
+                return entry;
+            }).collect(Collectors.toList());
+            if (entity.getAuditLog() != null) {
+                entity.getAuditLog().clear();
+                entity.getAuditLog().addAll(auditEntities);
+            } else {
+                entity.setAuditLog(auditEntities);
+            }
+        }
         return entity;
     }
 
@@ -51,6 +81,7 @@ public abstract class SystemAdminEntityMapper extends BaseUserEntityMapper {
 
         restorePermissions(admin, toPermissions(entity.getPermissions()));
         restoreLastLoginAt(admin, toLocalDateTime(entity.getLastLoginAt()));
+        fillBaseUserDomain(admin, entity);
 
         return admin;
     }

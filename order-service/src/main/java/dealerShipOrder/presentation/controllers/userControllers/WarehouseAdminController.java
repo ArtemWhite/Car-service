@@ -38,7 +38,7 @@ public class WarehouseAdminController {
         return ResponseEntity.ok(mapper.toWarehouseAdminPresentation(response));
     }
 
-    @GetMapping("/sections")
+    @GetMapping({"/sections", "/me/sections"})
     @Operation(summary = "Get managed sections")
     @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<ManagedSectionsPresentationResponse> getManagedSections() {
@@ -46,7 +46,7 @@ public class WarehouseAdminController {
         return ResponseEntity.ok(mapper.toManagedSectionsPresentation(response));
     }
 
-    @PostMapping("/shift/start")
+    @PostMapping({"/shift/start", "/me/shift/start"})
     @Operation(summary = "Start shift")
     @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<WarehouseAdminPresentationResponse> startShift() {
@@ -54,7 +54,7 @@ public class WarehouseAdminController {
         return ResponseEntity.ok(mapper.toWarehouseAdminPresentation(response));
     }
 
-    @PostMapping("/shift/end")
+    @PostMapping({"/shift/end", "/me/shift/end"})
     @Operation(summary = "End shift")
     @PreAuthorize("hasAnyRole('WAREHOUSE_ADMIN', 'SYSTEM_ADMIN')")
     public ResponseEntity<WarehouseAdminPresentationResponse> endShift() {

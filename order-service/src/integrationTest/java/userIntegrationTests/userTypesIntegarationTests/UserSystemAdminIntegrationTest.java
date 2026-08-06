@@ -41,6 +41,8 @@ class UserSystemAdminIntegrationTest extends UserBaseIntegrationTest {
                         .header("X-User-Id", adminId))
                 .andExpect(status().isOk());
 
+        entityManager.flush();
+
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM admin_permissions ap " +
                         "JOIN system_permissions sp ON ap.permission_id = sp.id " +

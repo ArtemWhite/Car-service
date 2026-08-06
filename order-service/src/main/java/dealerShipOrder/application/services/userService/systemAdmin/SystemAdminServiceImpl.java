@@ -3,7 +3,10 @@ package dealerShipOrder.application.services.userService.systemAdmin;
 import dealerShipOrder.application.dtos.request.userRequest.*;
 import dealerShipOrder.application.dtos.response.userResponse.UserBaseResponse;
 import dealerShipOrder.application.dtos.response.userResponse.UserListResponse;
+import dealerShipOrder.application.dtos.response.userResponse.users.ClientResponse;
+import dealerShipOrder.application.dtos.response.userResponse.users.ManagerResponse;
 import dealerShipOrder.application.dtos.response.userResponse.users.SystemAdminResponse;
+import dealerShipOrder.application.dtos.response.userResponse.users.WarehouseAdminResponse;
 import dealerShipOrder.application.mapper.UserMapper;
 import dealerShipOrder.application.services.userService.BaseUserService;
 import dealerShipOrder.domain.repository.usersRepository.userRepository.UserRepository;
@@ -35,13 +38,18 @@ import java.util.stream.Collectors;
 public class SystemAdminServiceImpl extends BaseUserService implements SystemAdminService {
 
     private final AuditLogEntryJpaRepository auditLogRepository;
+    private final org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+    @org.springframework.beans.factory.annotation.Autowired
+    private javax.persistence.EntityManager entityManager;
 
     public SystemAdminServiceImpl(
             UserRepository userRepository,
             UserMapper userMapper,
-            AuditLogEntryJpaRepository auditLogRepository) {
+            AuditLogEntryJpaRepository auditLogRepository,
+            org.springframework.jdbc.core.JdbcTemplate jdbcTemplate) {
         super(userRepository, userMapper);
         this.auditLogRepository = auditLogRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -137,6 +145,10 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
         }
 
         User user = findUserById(userId);
+        if (user.getStatus() == UserStatus.BLOCKED) {
+            throw new DomainValidationException("User is already blocked");
+        }
+
         user.block();
         User updated = saveUser(user);
 
@@ -217,17 +229,100 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
         SystemAdmin admin = getCurrentSystemAdmin();
         admin.checkPermission(SystemPermission.VIEW_USERS);
 
-        List<User> users = userRepository.findAll();
-        List<UserBaseResponse> responses = users.stream()
+        List<User> allUsers = userRepository.findAll();
+        List<User> filteredUsers = allUsers.stream().filter(u -> {
+            if (filter.getQuery() != null && !filter.getQuery().isBlank()) {
+                String q = filter.getQuery().toLowerCase();
+                boolean matchesEmail = u.getEmail() != null && u.getEmail().toLowerCase().contains(q);
+                boolean matchesFirst = u.getFirstName() != null && u.getFirstName().toLowerCase().contains(q);
+                boolean matchesLast = u.getLastName() != null && u.getLastName().toLowerCase().contains(q);
+                boolean matchesFull = u.getFullName() != null && u.getFullName().toLowerCase().contains(q);
+                if (!matchesEmail && !matchesFirst && !matchesLast && !matchesFull) {
+                    return false;
+                }
+            }
+            if (filter.getUserType() != null && !filter.getUserType().isBlank()) {
+                if (u.getUserType() == null || !u.getUserType().name().equalsIgnoreCase(filter.getUserType())) {
+                    return false;
+                }
+            }
+            if (filter.getStatus() != null && !filter.getStatus().isBlank()) {
+                if (u.getStatus() == null || !u.getStatus().name().equalsIgnoreCase(filter.getStatus())) {
+                    return false;
+                }
+            }
+            if (filter.getEmail() != null && !filter.getEmail().isBlank()) {
+                if (u.getEmail() == null || !u.getEmail().toLowerCase().contains(filter.getEmail().toLowerCase())) {
+                    return false;
+                }
+            }
+            if (filter.getPhone() != null && !filter.getPhone().isBlank()) {
+                if (u.getPhone() == null || !u.getPhone().contains(filter.getPhone())) {
+                    return false;
+                }
+            }
+            if (filter.getFirstName() != null && !filter.getFirstName().isBlank()) {
+                if (u.getFirstName() == null || !u.getFirstName().toLowerCase().contains(filter.getFirstName().toLowerCase())) {
+                    return false;
+                }
+            }
+            if (filter.getLastName() != null && !filter.getLastName().isBlank()) {
+                if (u.getLastName() == null || !u.getLastName().toLowerCase().contains(filter.getLastName().toLowerCase())) {
+                    return false;
+                }
+            }
+            if (Boolean.TRUE.equals(filter.getActive())) {
+                if (u.getStatus() != UserStatus.ACTIVE) {
+                    return false;
+                }
+            }
+            if (filter.getManagerPosition() != null && !filter.getManagerPosition().isBlank()) {
+                if (!(u instanceof Manager m) || m.getPosition() == null || !m.getPosition().name().equalsIgnoreCase(filter.getManagerPosition())) {
+                    return false;
+                }
+            }
+            if (filter.getAdminLevel() != null && !filter.getAdminLevel().isBlank()) {
+                if (!(u instanceof SystemAdmin a) || a.getLevel() == null || !a.getLevel().name().equalsIgnoreCase(filter.getAdminLevel())) {
+                    return false;
+                }
+            }
+            if (filter.getAvailable() != null) {
+                if (!(u instanceof Manager m) || m.isAvailable() != filter.getAvailable()) {
+                    return false;
+                }
+            }
+            if (filter.getSectionId() != null && !filter.getSectionId().isBlank()) {
+                if (!(u instanceof WarehouseAdmin w) || w.getManagedSectionIds() == null || !w.getManagedSectionIds().contains(filter.getSectionId())) {
+                    return false;
+                }
+            }
+            if (filter.getNewsletterSubscribed() != null) {
+                if (!(u instanceof Client c) || c.isNewsletterSubscribed() != filter.getNewsletterSubscribed()) {
+                    return false;
+                }
+            }
+            return true;
+        }).collect(Collectors.toList());
+
+        List<User> paginatedUsers;
+        if (filter.getPage() != null && filter.getSize() != null && filter.getSize() > 0) {
+            int fromIndex = Math.min(filter.getPage() * filter.getSize(), filteredUsers.size());
+            int toIndex = Math.min(fromIndex + filter.getSize(), filteredUsers.size());
+            paginatedUsers = filteredUsers.subList(fromIndex, toIndex);
+        } else {
+            paginatedUsers = filteredUsers;
+        }
+
+        List<UserBaseResponse> responses = paginatedUsers.stream()
                 .map(this::getUserResponseByType)
                 .collect(Collectors.toList());
 
         return new UserListResponse(
                 responses,
-                users.size(),
-                (int) users.stream().filter(u -> u.getStatus() == UserStatus.ACTIVE).count(),
-                (int) users.stream().filter(u -> u.getStatus() == UserStatus.INACTIVE).count(),
-                (int) users.stream().filter(u -> u.getStatus() == UserStatus.BLOCKED).count()
+                filteredUsers.size(),
+                (int) allUsers.stream().filter(u -> u.getStatus() == UserStatus.ACTIVE).count(),
+                (int) allUsers.stream().filter(u -> u.getStatus() == UserStatus.INACTIVE).count(),
+                (int) allUsers.stream().filter(u -> u.getStatus() == UserStatus.BLOCKED).count()
         );
     }
 
@@ -287,19 +382,8 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
             throw new DomainValidationException("Cannot promote to same or higher level than yourself");
         }
 
-        SystemAdmin promoted = new SystemAdmin(
-                target.getFirstName(),
-                target.getLastName(),
-                target.getMiddleName(),
-                target.getEmail(),
-                target.getPhone(),
-                "",
-                target.getId(),
-                level
-        );
-
-        userRepository.delete(targetAdminId);
-        SystemAdmin saved = (SystemAdmin) saveUser(promoted);
+        target.promoteTo(level);
+        SystemAdmin saved = (SystemAdmin) saveUser(target);
 
         admin.logAction("PROMOTE_ADMIN", "Promoted " + target.getEmail() + " to " + newLevel);
         saveUser(admin);
@@ -308,7 +392,7 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
     }
 
     @Override
-    public SystemAdminResponse promoteManager(String managerId, String newPosition) {
+    public ManagerResponse promoteManager(String managerId, String newPosition) {
         SystemAdmin admin = getCurrentSystemAdmin();
         admin.checkPermission(SystemPermission.MANAGE_PERMISSIONS);
 
@@ -318,27 +402,52 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
         }
 
         manager.promote(Position.valueOf(newPosition));
-        saveUser(manager);
+        Manager saved = (Manager) saveUser(manager);
 
         admin.logAction("PROMOTE_MANAGER", "Promoted manager " + managerId + " to " + newPosition);
         saveUser(admin);
 
-        return userMapper.toSystemAdminResponse(admin);
+        return userMapper.toManagerResponse(saved);
     }
 
     @Override
-    public SystemAdminResponse promoteWarehouseAdmin(String targetAdminId, String newPosition) {
+    public SystemAdminResponse promoteManagerToAdmin(String managerId, String adminLevelStr) {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        admin.checkPermission(SystemPermission.MANAGE_PERMISSIONS);
+
+        User user = findUserById(managerId);
+        if (!(user instanceof Manager manager)) {
+            throw new DomainValidationException("User is not a manager");
+        }
+        AdminLevel level = AdminLevel.valueOf(adminLevelStr != null ? adminLevelStr : "JUNIOR_ADMIN");
+
+        jdbcTemplate.update("DELETE FROM managers WHERE user_id = ?::uuid", UUID.fromString(managerId));
+        jdbcTemplate.update("UPDATE users SET user_type_id = (SELECT id FROM user_types WHERE name = 'SYSTEM_ADMIN') WHERE id = ?::uuid", UUID.fromString(managerId));
+        jdbcTemplate.update("INSERT INTO system_admins (user_id, admin_level_id, last_login_at) VALUES (?::uuid, (SELECT id FROM admin_levels WHERE name = ?), NOW()) ON CONFLICT (user_id) DO UPDATE SET admin_level_id = EXCLUDED.admin_level_id", UUID.fromString(managerId), level.name());
+
+        entityManager.flush();
+        entityManager.clear();
+
+        SystemAdmin newAdmin = findSystemAdminById(managerId);
+        admin.logAction("PROMOTE_MANAGER_TO_ADMIN", "Promoted manager " + manager.getEmail() + " to " + level.name());
+        saveUser(admin);
+
+        return userMapper.toSystemAdminResponse(newAdmin);
+    }
+
+    @Override
+    public WarehouseAdminResponse promoteWarehouseAdmin(String targetAdminId, String newPosition) {
         SystemAdmin admin = getCurrentSystemAdmin();
         admin.checkPermission(SystemPermission.MANAGE_PERMISSIONS);
 
         WarehouseAdmin target = findWarehouseAdminById(targetAdminId);
         target.setPosition(WarehousePosition.valueOf(newPosition));
-        saveUser(target);
+        WarehouseAdmin saved = (WarehouseAdmin) saveUser(target);
 
         admin.logAction("PROMOTE_WAREHOUSE_ADMIN", "Promoted warehouse admin " + targetAdminId + " to " + newPosition);
         saveUser(admin);
 
-        return userMapper.toSystemAdminResponse(admin);
+        return userMapper.toWarehouseAdminResponse(saved);
     }
 
     private WarehouseAdmin findWarehouseAdminById(String adminId) {
@@ -361,7 +470,9 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
                         .id(entity.getId().toString())
                         .operationType(entity.getAction())
                         .description(entity.getDetails())
-                        .timestamp(java.time.LocalDateTime.ofInstant(entity.getTimestamp(), ZoneId.systemDefault()))
+                        .timestamp(entity.getTimestamp() != null ? java.time.LocalDateTime.ofInstant(entity.getTimestamp(), ZoneId.systemDefault()) : java.time.LocalDateTime.now())
+                        .adminId(entity.getAdmin() != null ? entity.getAdmin().getId().toString() : null)
+                        .adminName(entity.getAdmin() != null ? entity.getAdmin().getFirstName() + " " + entity.getAdmin().getLastName() : "Admin")
                         .build())
                 .collect(Collectors.toList());
     }
@@ -378,7 +489,9 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
                         .id(entity.getId().toString())
                         .operationType(entity.getAction())
                         .description(entity.getDetails())
-                        .timestamp(java.time.LocalDateTime.ofInstant(entity.getTimestamp(), ZoneId.systemDefault()))
+                        .timestamp(entity.getTimestamp() != null ? java.time.LocalDateTime.ofInstant(entity.getTimestamp(), ZoneId.systemDefault()) : java.time.LocalDateTime.now())
+                        .adminId(entity.getAdmin() != null ? entity.getAdmin().getId().toString() : null)
+                        .adminName(entity.getAdmin() != null ? entity.getAdmin().getFirstName() + " " + entity.getAdmin().getLastName() : "Admin")
                         .build())
                 .collect(Collectors.toList());
     }
@@ -397,11 +510,49 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
         SystemAdmin admin = getCurrentSystemAdmin();
         admin.checkPermission(SystemPermission.UPDATE_USER);
 
+        if (admin.getId().equals(userId)) {
+            throw new DomainValidationException("Cannot deactivate your own account");
+        }
+
         User user = findUserById(userId);
         user.deactivate();
         User updated = saveUser(user);
 
         admin.logAction("DEACTIVATE_USER", "Deactivated user: " + userId);
+        saveUser(admin);
+
+        return getUserResponseByType(updated);
+    }
+
+    @Override
+    public UserBaseResponse activateUser(String userId) {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        admin.checkPermission(SystemPermission.UPDATE_USER);
+
+        User user = findUserById(userId);
+        if (user.getStatus() == UserStatus.ACTIVE) {
+            throw new DomainValidationException("User is already active");
+        }
+
+        user.activate();
+        User updated = saveUser(user);
+
+        admin.logAction("ACTIVATE_USER", "Activated user: " + userId);
+        saveUser(admin);
+
+        return getUserResponseByType(updated);
+    }
+
+    @Override
+    public UserBaseResponse restoreUser(String userId) {
+        SystemAdmin admin = getCurrentSystemAdmin();
+        admin.checkPermission(SystemPermission.UPDATE_USER);
+
+        User user = findUserById(userId);
+        user.activate();
+        User updated = saveUser(user);
+
+        admin.logAction("RESTORE_USER", "Restored user: " + userId);
         saveUser(admin);
 
         return getUserResponseByType(updated);
@@ -455,23 +606,8 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
         SystemAdmin target = findSystemAdminById(targetAdminId);
         AdminLevel level = AdminLevel.valueOf(newLevel);
 
-        if (level.ordinal() >= target.getLevel().ordinal()) {
-            throw new DomainValidationException("Cannot demote to same or higher level");
-        }
-
-        SystemAdmin demoted = new SystemAdmin(
-                target.getFirstName(),
-                target.getLastName(),
-                target.getMiddleName(),
-                target.getEmail(),
-                target.getPhone(),
-                "",
-                target.getId(),
-                level
-        );
-
-        userRepository.delete(targetAdminId);
-        SystemAdmin saved = (SystemAdmin) saveUser(demoted);
+        target.promoteTo(level);
+        SystemAdmin saved = (SystemAdmin) saveUser(target);
 
         admin.logAction("DEMOTE_ADMIN", "Demoted " + target.getEmail() + " to " + newLevel);
         saveUser(admin);
@@ -553,34 +689,25 @@ public class SystemAdminServiceImpl extends BaseUserService implements SystemAdm
 
     @Override
     @Transactional
-    public SystemAdminResponse promoteManagerToAdmin(String managerId, String adminLevel) {
+    public void bulkDeleteUsers(List<String> userIds, String reason) {
         SystemAdmin admin = getCurrentSystemAdmin();
-        admin.checkPermission(SystemPermission.MANAGE_PERMISSIONS);
+        admin.checkPermission(SystemPermission.DELETE_USER);
 
-        User user = findUserById(managerId);
-        if (!(user instanceof Manager manager)) {
-            throw new DomainValidationException("User is not a manager");
+        for (String userId : userIds) {
+            if (!admin.getId().equals(userId)) {
+                try {
+                    UUID uuid = UUID.fromString(userId);
+                    jdbcTemplate.update("UPDATE users SET removed = true, updated_at = NOW() WHERE id = ?::uuid", uuid);
+                } catch (Exception e) {
+
+                }
+            }
         }
-
-        AdminLevel level = AdminLevel.valueOf(adminLevel);
-
-        SystemAdmin newAdmin = new SystemAdmin(
-                manager.getFirstName(),
-                manager.getLastName(),
-                manager.getMiddleName(),
-                manager.getEmail(),
-                manager.getPhone(),
-                "",
-                manager.getId(),
-                level
-        );
-
-        userRepository.delete(managerId);
-        SystemAdmin saved = (SystemAdmin) saveUser(newAdmin);
-
-        admin.logAction("PROMOTE_MANAGER_TO_ADMIN", "Promoted manager " + managerId + " to admin level " + adminLevel);
+        String details = "Bulk deleted " + userIds.size() + " users. Reason: " + reason;
+        if (details.length() > 500) {
+            details = details.substring(0, 497) + "...";
+        }
+        admin.logAction("BULK_DELETE_USERS", details);
         saveUser(admin);
-
-        return userMapper.toSystemAdminResponse(saved);
     }
 }

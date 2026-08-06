@@ -115,7 +115,7 @@ class TestDriveClientServiceIntegrationTest extends TestDriveBaseIntegrationTest
         mockMvc.perform(post("/api/client/test-drives")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -238,7 +238,7 @@ class TestDriveClientServiceIntegrationTest extends TestDriveBaseIntegrationTest
         mockMvc.perform(post("/api/client/test-drives/{id}/reschedule", requestId)
                         .header("X-User-Id", clientId)
                         .param("newTime", newTime))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
     @Test

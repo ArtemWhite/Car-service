@@ -206,6 +206,6 @@ class OrderClientControllerIntegrationTest extends BaseIntegrationTest {
         mockMvc.perform(post("/api/client/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestBody)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 }

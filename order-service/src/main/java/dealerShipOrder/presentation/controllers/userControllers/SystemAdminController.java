@@ -75,12 +75,13 @@ public class SystemAdminController {
         return ResponseEntity.ok(mapper.toPresentation(response));
     }
 
-    @GetMapping("/users")
-    @Operation(summary = "Get all users")
+    @GetMapping({"/users", "/users/search", "/users/all"})
+    @Operation(summary = "Get all users or search")
     @PreAuthorize("hasRole('SYSTEM_ADMIN')")
-    public ResponseEntity<UserListPresentationResponse> getAllUsers() {
-        var response = systemAdminService.getAllUsers();
-        return ResponseEntity.ok(mapper.toUserListPresentation(response));
+    public ResponseEntity<UserListPresentationResponse> getAllUsers(@Valid UserFilterPresentationRequest request) {
+        var appFilter = mapper.toApplication(request);
+        var response = systemAdminService.getUsersWithFilters(appFilter);
+        return ResponseEntity.ok(mapper.toUserListPresentationFromListResponse(response));
     }
 
     @GetMapping("/users/type/{userType}")
@@ -111,21 +112,21 @@ public class SystemAdminController {
     @PostMapping("/managers/{managerId}/promote")
     @Operation(summary = "Promote manager")
     @PreAuthorize("hasRole('SYSTEM_ADMIN')")
-    public ResponseEntity<SystemAdminPresentationResponse> promoteManager(
+    public ResponseEntity<dealerShipOrder.presentation.dtos.response.userResponsePresentationDto.ManagerPresentationResponse> promoteManager(
             @PathVariable String managerId,
             @RequestParam String newPosition) {
         var response = systemAdminService.promoteManager(managerId, newPosition);
-        return ResponseEntity.ok(mapper.toSystemAdminPresentation(response));
+        return ResponseEntity.ok(mapper.toManagerPresentation(response));
     }
 
     @PostMapping("/warehouse-admins/{targetAdminId}/promote")
     @Operation(summary = "Promote warehouse admin")
     @PreAuthorize("hasRole('SYSTEM_ADMIN')")
-    public ResponseEntity<SystemAdminPresentationResponse> promoteWarehouseAdmin(
+    public ResponseEntity<dealerShipOrder.presentation.dtos.response.userResponsePresentationDto.WarehouseAdminPresentationResponse> promoteWarehouseAdmin(
             @PathVariable String targetAdminId,
             @RequestParam String newPosition) {
         var response = systemAdminService.promoteWarehouseAdmin(targetAdminId, newPosition);
-        return ResponseEntity.ok(mapper.toSystemAdminPresentation(response));
+        return ResponseEntity.ok(mapper.toWarehouseAdminPresentation(response));
     }
 
     @PostMapping("/admins/{targetAdminId}/permissions/{permission}")
@@ -160,7 +161,7 @@ public class SystemAdminController {
         return ResponseEntity.ok(mapper.toSystemAdminPresentation(response));
     }
 
-    @GetMapping("/audit-log")
+    @GetMapping({"/audit-log", "/me/audit-log"})
     @Operation(summary = "Get audit log")
     @PreAuthorize("hasRole('SYSTEM_ADMIN')")
     public ResponseEntity<OperationHistoryListPresentationResponse> getAuditLog() {
@@ -181,6 +182,22 @@ public class SystemAdminController {
     @PreAuthorize("hasRole('SYSTEM_ADMIN')")
     public ResponseEntity<UserBasePresentationResponse> deactivateUser(@PathVariable String userId) {
         var response = systemAdminService.deactivateUser(userId);
+        return ResponseEntity.ok(mapper.toPresentation(response));
+    }
+
+    @PostMapping("/users/{userId}/activate")
+    @Operation(summary = "Activate user")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<UserBasePresentationResponse> activateUser(@PathVariable String userId) {
+        var response = systemAdminService.activateUser(userId);
+        return ResponseEntity.ok(mapper.toPresentation(response));
+    }
+
+    @PostMapping("/users/{userId}/restore")
+    @Operation(summary = "Restore user")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<UserBasePresentationResponse> restoreUser(@PathVariable String userId) {
+        var response = systemAdminService.restoreUser(userId);
         return ResponseEntity.ok(mapper.toPresentation(response));
     }
 
@@ -234,7 +251,7 @@ public class SystemAdminController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/users/bulk/status")
+    @RequestMapping(value = "/users/bulk/status", method = {RequestMethod.PUT, RequestMethod.POST})
     @Operation(summary = "Bulk update user status")
     @PreAuthorize("hasRole('SYSTEM_ADMIN')")
     public ResponseEntity<?> bulkUpdateUserStatus(
@@ -242,6 +259,16 @@ public class SystemAdminController {
             @RequestBody List<String> userIds) {
         var response = systemAdminService.bulkUpdateUserStatus(userIds, status);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/users/bulk")
+    @Operation(summary = "Bulk delete users")
+    @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+    public ResponseEntity<Void> bulkDeleteUsers(
+            @RequestParam String reason,
+            @RequestBody List<String> userIds) {
+        systemAdminService.bulkDeleteUsers(userIds, reason);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/system/settings")

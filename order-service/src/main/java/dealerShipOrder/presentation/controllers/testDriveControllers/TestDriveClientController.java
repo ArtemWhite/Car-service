@@ -37,7 +37,7 @@ public class TestDriveClientController {
         return ResponseEntity.status(201).body(mapper.toPresentation(response));
     }
 
-    @GetMapping("/my")
+    @GetMapping({"/my", "/me"})
     @Operation(summary = "Get my test drive requests")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<TestDriveListPresentationResponse> getMyRequests() {

@@ -31,6 +31,12 @@ public class TestSecurityConfiguration {
                         "/actuator/health").permitAll()
                 .anyRequest().authenticated();
 
+        http.exceptionHandling().accessDeniedHandler((request, response, accessDeniedException) -> {
+            response.setStatus(javax.servlet.http.HttpServletResponse.SC_FORBIDDEN);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"error\":\"Access denied: " + accessDeniedException.getMessage() + "\"}");
+        });
+
         return http.build();
     }
 }

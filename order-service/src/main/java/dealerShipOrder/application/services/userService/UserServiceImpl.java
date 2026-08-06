@@ -29,12 +29,22 @@ public class UserServiceImpl extends BaseUserService implements UserService {
     @Override
     @Transactional(readOnly = true)
     public UserBaseResponse getUserById(String id) {
-        if (id == null || id.isBlank()) {
+        if (id == null || id.isBlank() || "me".equalsIgnoreCase(id)) {
             User user = getCurrentUser();
-            return userMapper.toBaseResponse(user);
+            return getUserResponseByType(user);
         }
         User user = findUserById(id);
-        return userMapper.toBaseResponse(user);
+        return getUserResponseByType(user);
+    }
+
+    private UserBaseResponse getUserResponseByType(User user) {
+        return switch (user) {
+            case dealerShipOrder.domain.models.users.client.Client client -> userMapper.toClientResponse(client);
+            case dealerShipOrder.domain.models.users.manager.Manager manager -> userMapper.toManagerResponse(manager);
+            case dealerShipOrder.domain.models.users.systemAdmin.SystemAdmin admin -> userMapper.toSystemAdminResponse(admin);
+            case dealerShipOrder.domain.models.users.warehouseAdmin.WarehouseAdmin warehouseAdmin -> userMapper.toWarehouseAdminResponse(warehouseAdmin);
+            default -> userMapper.toBaseResponse(user);
+        };
     }
 
     @Override
@@ -42,7 +52,7 @@ public class UserServiceImpl extends BaseUserService implements UserService {
         User user = getCurrentUser();
         userMapper.updateDomain(user, request);
         User updated = saveUser(user);
-        return userMapper.toBaseResponse(updated);
+        return getUserResponseByType(updated);
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public abstract class ManagerEntityMapper extends BaseUserEntityMapper {
@@ -21,10 +22,15 @@ public abstract class ManagerEntityMapper extends BaseUserEntityMapper {
     @Autowired
     protected ManagerPositionJpaRepository positionRepository;
 
+    @Autowired
+    protected dealerShipOrder.infrastructure.jpaRepository.userJpaRepositories.managerJpaRepositories.ManagerJpaRepository managerJpaRepository;
+
     public ManagerEntity toEntity(Manager manager) {
         if (manager == null) return null;
 
-        ManagerEntity entity = new ManagerEntity();
+        UUID uuid = toUuid(manager.getId());
+        ManagerEntity entity = (uuid != null && managerJpaRepository != null) ?
+                managerJpaRepository.findById(uuid).orElseGet(ManagerEntity::new) : new ManagerEntity();
         fillBaseUserEntity(entity, manager);
         entity.setPosition(toPositionEntity(manager.getPosition()));
         entity.setMaxConcurrentOrders(manager.getMaxConcurrentOrders());
@@ -55,6 +61,7 @@ public abstract class ManagerEntityMapper extends BaseUserEntityMapper {
         restoreAssignedOrders(manager, entity.getAssignedOrderIds());
         restoreManagedTestDrives(manager, entity.getManagedTestDriveIds());
         restoreTestDriveFleet(manager, entity.getTestDriveFleetCarIds());
+        fillBaseUserDomain(manager, entity);
 
         return manager;
     }

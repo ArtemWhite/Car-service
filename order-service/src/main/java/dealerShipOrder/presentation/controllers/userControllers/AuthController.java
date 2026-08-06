@@ -24,6 +24,7 @@ public class AuthController {
 
     private final UserRepository userRepository;
     private final Map<String, TokenInfo> activeTokens = new ConcurrentHashMap<>();
+    private final Map<String, Integer> failedLoginAttempts = new ConcurrentHashMap<>();
 
     @PostMapping("/login")
     @Operation(summary = "Authenticate user")
@@ -35,7 +36,7 @@ public class AuthController {
             return ResponseEntity.badRequest().body(Map.of("error", "Email and password are required"));
         }
 
-        Optional<User> userOpt = userRepository.findByEmailAndPassword(email, password);
+        Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
         }
@@ -45,6 +46,19 @@ public class AuthController {
         if (user.getStatus() == UserStatus.BLOCKED) {
             return ResponseEntity.status(403).body(Map.of("error", "Account is blocked"));
         }
+
+        if (!user.authenticate(password)) {
+            int attempts = failedLoginAttempts.getOrDefault(email, 0) + 1;
+            failedLoginAttempts.put(email, attempts);
+            if (attempts > 5) {
+                user.block();
+                userRepository.save(user);
+                return ResponseEntity.status(403).body(Map.of("error", "Account is blocked"));
+            }
+            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+        }
+
+        failedLoginAttempts.remove(email);
 
         if (user.getStatus() == UserStatus.INACTIVE) {
             return ResponseEntity.status(403).body(Map.of("error", "Account is inactive"));

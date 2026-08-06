@@ -21,6 +21,7 @@ class UserSelfServiceIntegrationTest extends UserBaseIntegrationTest {
     @BeforeEach
     void setUp() {
         cleanUpUsers();
+        createTestUsers();
 
         testClientId = UUID.randomUUID().toString();
         createUser(testClientId, "CLIENT", "selfclient@test.com", "ACTIVE");
@@ -90,8 +91,8 @@ class UserSelfServiceIntegrationTest extends UserBaseIntegrationTest {
         Map<String, Object> request = new HashMap<>();
         request.put("firstName", "HackedName");
 
-        mockMvc.perform(put("/api/users/me")
-                        .header("X-User-Id", adminId)
+        mockMvc.perform(put("/api/admin/users/" + testClientId)
+                        .header("X-User-Id", testManagerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden());
@@ -206,28 +207,31 @@ class UserSelfServiceIntegrationTest extends UserBaseIntegrationTest {
     void shouldGetOwnOrdersAsClient() throws Exception {
         String orderId = UUID.randomUUID().toString();
         jdbcTemplate.update(
-                "INSERT INTO client_orders (client_id, order_id) VALUES (?::uuid, ?)",
-                UUID.fromString(testClientId), orderId
+                "INSERT INTO orders (id, client_id, car_id, type_id, status_id, created_at, updated_at, removed) " +
+                "VALUES (?::uuid, ?, 'some-car-id', (SELECT id FROM order_types WHERE name = 'IN_STOCK'), " +
+                "(SELECT id FROM order_statuses WHERE name = 'CREATED'), NOW(), NOW(), false)",
+                orderId, testClientId
         );
 
-        mockMvc.perform(get("/api/client/me/orders")
+        mockMvc.perform(get("/api/client/orders/my")
                         .header("X-User-Id", testClientId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.orders.length()").value(1));
     }
 
     @Test
     void shouldGetOwnTestDrivesAsClient() throws Exception {
         String testDriveId = UUID.randomUUID().toString();
         jdbcTemplate.update(
-                "INSERT INTO client_test_drives (client_id, test_drive_id) VALUES (?::uuid, ?)",
-                UUID.fromString(testClientId), testDriveId
+                "INSERT INTO test_drive_requests (id, client_id, car_id, requested_time, status_id, created_at, updated_at, removed) " +
+                "VALUES (?::uuid, ?, 'some-car-id', NOW(), (SELECT id FROM test_drive_statuses WHERE name = 'PENDING'), NOW(), NOW(), false)",
+                testDriveId, testClientId
         );
 
-        mockMvc.perform(get("/api/client/me/test-drives")
+        mockMvc.perform(get("/api/client/test-drives/my")
                         .header("X-User-Id", testClientId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
+                .andExpect(jsonPath("$.testDrives.length()").value(1));
     }
 
     @Test

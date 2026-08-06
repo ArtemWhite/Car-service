@@ -20,6 +20,6 @@ public interface SystemAdminJpaRepository extends JpaRepository<SystemAdminEntit
     @Query("SELECT s FROM SystemAdminEntity s WHERE s.adminLevel.name = :level AND s.removed = false")
     List<SystemAdminEntity> findByAdminLevel(@Param("level") String level);
 
-    @Query("SELECT s FROM SystemAdminEntity s WHERE :permission MEMBER OF s.permissions AND s.removed = false")
+    @Query("SELECT s FROM SystemAdminEntity s JOIN s.permissions p WHERE p.name = :permission AND s.removed = false")
     List<SystemAdminEntity> findByPermission(@Param("permission") String permission);
 }

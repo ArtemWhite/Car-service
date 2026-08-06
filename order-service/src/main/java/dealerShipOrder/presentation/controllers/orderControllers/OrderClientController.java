@@ -32,12 +32,20 @@ public class OrderClientController {
         return ResponseEntity.status(201).body(mapper.toPresentation(response));
     }
 
-    @GetMapping("/my")
+    @GetMapping({"/my", "/me"})
     @Operation(summary = "Get my orders (current client)")
     @PreAuthorize("hasRole('CLIENT')")
     public ResponseEntity<OrderListPresentationResponse> getMyOrders() {
         var response = orderClientService.getMyOrders();
         return ResponseEntity.ok(mapper.toListPresentation(response));
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get my order by ID")
+    @PreAuthorize("hasRole('CLIENT') and @orderSecurity.isOwner(#id, authentication)")
+    public ResponseEntity<OrderPresentationResponse> getOrderById(@PathVariable String id) {
+        var response = orderClientService.getOrderById(id);
+        return ResponseEntity.ok(mapper.toPresentation(response));
     }
 
     @PostMapping("/{id}/cancel")

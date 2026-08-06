@@ -29,7 +29,7 @@ public class SystemAdminEntity extends UserEntity {
     )
     private List<SystemPermissionEntity> permissions = new ArrayList<>();
 
-    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<AuditLogEntryEntity> auditLog = new ArrayList<>();
 
     @Column(name = "last_login_at")

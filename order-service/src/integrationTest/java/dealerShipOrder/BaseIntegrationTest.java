@@ -16,8 +16,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -222,6 +224,7 @@ public abstract class BaseIntegrationTest {
     }
 
     private static final PostgreSQLContainer<?> postgres;
+    private static final KafkaContainer kafka;
 
     static {
         postgres = new PostgreSQLContainer<>("postgres:15")
@@ -229,6 +232,9 @@ public abstract class BaseIntegrationTest {
                 .withUsername("test")
                 .withPassword("test");
         postgres.start();
+
+        kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.5.0"));
+        kafka.start();
     }
 
     @DynamicPropertySource
@@ -244,6 +250,6 @@ public abstract class BaseIntegrationTest {
         registry.add("spring.datasource.hikari.maximumPoolSize", () -> "10");
         registry.add("spring.datasource.hikari.connectionTimeout", () -> "30000");
         registry.add("grpc.client.storage-service.address", () -> "static://localhost:9999");
-        registry.add("spring.kafka.bootstrap-servers", () -> "localhost:9999");
+        registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
     }
 }

@@ -178,7 +178,7 @@ public class OrderIsolationTest extends BaseIntegrationTest {
         String response = mockMvc.perform(post("/api/client/orders")
                         .header("X-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"carId\": \"" + carId + "\", \"deliveryAddress\": \"Test Address\", \"deliveryType\": \"DELIVERY\", \"paymentMethod\": \"CARD\"}"))
+                        .content("{\"carId\": \"" + carId + "\", \"orderType\": \"IN_STOCK\", \"deliveryAddress\": \"Test Address\", \"deliveryType\": \"DELIVERY\", \"paymentMethod\": \"CARD\"}"))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
 
