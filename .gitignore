@@ -49,5 +49,6 @@ bin/
 df
 dependencies.txt
 logs/*
+*.logs
 
 ###
