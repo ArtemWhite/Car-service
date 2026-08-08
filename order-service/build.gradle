@@ -8,7 +8,7 @@ plugins {
 group = 'com.dealership'
 version = '1.0.0'
 
-ext['mockito.version'] = '5.4.0'
+ext['mockito.version'] = '4.11.0'
 ext['byte-buddy.version'] = '1.14.5'
 
 java {
@@ -61,6 +61,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.mockito:mockito-inline:4.11.0'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.mockito', module: 'mockito-core'
+    }
     testImplementation 'io.grpc:grpc-testing:1.58.0'
     testImplementation 'org.testcontainers:testcontainers:1.21.4'
     testImplementation 'org.testcontainers:junit-jupiter:1.21.4'
@@ -127,6 +131,14 @@ tasks.named('processIntegrationTestResources') {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+tasks.named('compileTestJava') {
+    options.compilerArgs += ['-proc:none']
+}
+
+tasks.named('compileIntegrationTestJava') {
+    options.compilerArgs += ['-proc:none']
 }
 
 test {

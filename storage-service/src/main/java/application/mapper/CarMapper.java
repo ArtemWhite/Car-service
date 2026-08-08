@@ -266,9 +266,11 @@ public class CarMapper {
     }
 
     public String formatPrice(Price price) {
+        if (price == null || price.getAmount() == null) return "";
+        String symbol = "RUB".equals(price.getCurrency().getCurrencyCode()) ? "₽" : price.getCurrency().getSymbol(new java.util.Locale("ru", "RU"));
         return String.format("%,.0f %s",
                 price.getAmount(),
-                price.getCurrency().getSymbol()
+                symbol
         ).replace(',', ' ');
     }
 
