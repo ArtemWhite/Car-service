@@ -38,6 +38,7 @@ public abstract class BaseIntegrationTest {
         registry.add("spring.liquibase.enabled", () -> "true");
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
         registry.add("server.port", () -> "0");
+        registry.add("grpc.server.port", () -> "-1");
         registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.PostgreSQLDialect");
         registry.add("spring.datasource.hikari.maximumPoolSize", () -> "10");
         registry.add("spring.datasource.hikari.connectionTimeout", () -> "30000");

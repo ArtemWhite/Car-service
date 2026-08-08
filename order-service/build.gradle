@@ -9,6 +9,7 @@ group = 'com.dealership'
 version = '1.0.0'
 
 ext['mockito.version'] = '5.4.0'
+ext['byte-buddy.version'] = '1.14.5'
 
 java {
     toolchain {
@@ -30,8 +31,10 @@ dependencies {
 
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
     testCompileOnly 'org.projectlombok:lombok:1.18.30'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.30'
+    testAnnotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -50,6 +53,7 @@ dependencies {
 
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     implementation 'org.modelmapper:modelmapper:3.1.1'
 
     implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
@@ -97,6 +101,8 @@ idea {
     module {
         testSources.from sourceSets.integrationTest.java.srcDirs
         testResources.from sourceSets.integrationTest.resources.srcDirs
+        excludeDirs += file('build')
+        generatedSourceDirs.clear()
     }
 }
 
